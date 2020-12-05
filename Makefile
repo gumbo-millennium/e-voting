@@ -14,7 +14,6 @@ build:
 	docker build \
 		-t gumbo-millennium/e-voting \
 		-t docker.io/gumbo-millennium/e-voting \
-		-f ./.cloud/Dockerfile \
 		.
 
 push: build
