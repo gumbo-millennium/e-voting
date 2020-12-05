@@ -1,0 +1,16 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/stellar-shard-294215/e-voting', '.']
+
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/stellar-shard-294215/e-voting']
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['run', 'deploy', 'e-voting', '--image', 'gcr.io/stellar-shard-294215/e-voting', '--region', 'europe-west4', '--platform', 'managed']
+
+  images:
+  - gcr.io/stellar-shard-294215/e-voting
