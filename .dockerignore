@@ -3,7 +3,6 @@
 # https://docs.docker.com/engine/reference/builder/#dockerignore-file
 
 # Exclude locally vendored dependencies.
-vendor/
 node_modules/
 
 # Exclude "build-time" ignore files.

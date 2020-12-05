@@ -119,4 +119,4 @@ ENV TMPDIR=/usr/local/tmp/cloud
 
 # Install code
 WORKDIR /var/www/laravel
-COPY . ./
+COPY --chown=cloud:cloud . ./
