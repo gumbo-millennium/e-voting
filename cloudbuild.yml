@@ -1,16 +1,21 @@
 steps:
   # Build the container image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/stellar-shard-294215/e-voting', '.']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/e-voting:$BRANCH_NAME', '-t', 'gcr.io/$PROJECT_ID/e-voting:$BRANCH_NAME-$SHORT_SHA' '.']
 
   # Push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/stellar-shard-294215/e-voting']
+    args: ['push', 'gcr.io/$PROJECT_ID/e-voting:$BRANCH_NAME']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/e-voting:$BRANCH_NAME-$SHORT_SHA']
 
   # Deploy container image to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
-    args: ['run', 'deploy', 'e-voting', '--image', 'gcr.io/stellar-shard-294215/e-voting', '--region', 'europe-west4', '--platform', 'managed']
+    args: ['run', 'deploy', '$_SERVICE_NAME', '--image', 'gcr.io/$PROJECT_ID/e-voting:$BRANCH_NAME-$SHORT_SHA', '--region', 'europe-west4', '--platform', 'managed']
 
+  substitutions:
+    _SERVICE_NAME: e-voting
   images:
-  - gcr.io/stellar-shard-294215/e-voting
+  - gcr.io/$PROJECT_ID/e-voting:$BRANCH_NAME-$SHORT_SHA
+  - gcr.io/$PROJECT_ID/e-voting:$BRANCH_NAME
