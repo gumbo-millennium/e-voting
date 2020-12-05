@@ -2,6 +2,7 @@ version: '3.7'
 
 networks:
   network:
+    name: evoting_network
 
 volumes:
   mysql-data:
