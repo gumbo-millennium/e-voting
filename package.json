@@ -8,7 +8,8 @@
         "prod": "yarn run production",
         "production": "npx mix build -p",
         "build": "yarn run production",
-        "start": "yarn run watch"
+        "start": "yarn run watch",
+        "make-dummy-zip": "./.github/bin/make-dummy-zip"
     },
     "devDependencies": {
         "autoprefixer": "^10.0.1",
