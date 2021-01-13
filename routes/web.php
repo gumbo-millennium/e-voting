@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuditController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\KubernetesController;
 use App\Http\Controllers\MonitorController;
 use App\Http\Controllers\VoteController;
 use Illuminate\Support\Facades\Route;
@@ -76,3 +77,6 @@ Route::middleware('monitor')->prefix('monitor')->name('monitor.')->group(static 
     // Home route
     Route::get('/', [MonitorController::class, 'index'])->name('index');
 });
+
+// Kubernetes
+Route::get('/healthz', [KubernetesController::class, 'health']);
