@@ -1,0 +1,217 @@
+version: v1beta9
+
+# Defines all Dockerfiles that DevSpace will build, tag and push
+images:
+  app:
+    image: docker.pkg.github.com/gumbo-millennium/e-voting/app
+    preferSyncOverRebuild: true
+    injectRestartHelper: true
+    createPullSecret: true
+    appendDockerfileInstructions:
+      - USER root
+    tags:
+      - 'dev-${DEVSPACE_GIT_COMMIT}-###'
+      - 'dev-${GIT_BRANCH}-#####'
+
+# Defines an array of everything (component, Helm chart, Kubernetes maninfests)
+# that will be deployed with DevSpace in the specified order
+deployments:
+  # Main application
+  - name: "e-voting"
+    helm:
+      componentChart: true
+      values:
+        containers:
+          - image: docker.pkg.github.com/gumbo-millennium/e-voting/app
+
+            env:
+              # Database config
+              - name: DB_DATABASE
+                value: 'laravel'
+              - name: DB_USERNAME
+                value: 'laravel'
+              - name: DB_PASSWORD
+                value: 'laravel'
+
+              # Kubernetes hosts
+              - name: DB_HOST
+                value: mysql
+              - name: REDIS_HOST
+                value: redis
+
+              # Switch to Redis
+              - name: CACHE_DRIVER
+                value: redis
+              - name: QUEUE_CONNECTION
+                value: redis
+              - name: SESSION_DRIVER
+                value: redis
+
+              # Change logging to syslog
+              - name: LOG_CHANNEL
+                value: 'syslog'
+
+              # Secrets
+              - name: MESSAGEBIRD_ACCESS_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: messagebird
+                    key: accessKey
+
+              - name: MESSAGEBIRD_ORIGINATOR
+                valueFrom:
+                  secretKeyRef:
+                    name: messagebird
+                    key: originator
+
+              - name: CONSCRIBO_ACCOUNT
+                valueFrom:
+                  secretKeyRef:
+                    name: conscribo
+                    key: account
+
+              - name: CONSCRIBO_USERNAME
+                valueFrom:
+                  secretKeyRef:
+                    name: conscribo
+                    key: username
+
+              - name: CONSCRIBO_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: conscribo
+                    key: password
+
+            volumeMounts:
+              - containerPath: /var/www/html/storage
+                volume:
+                  name: laravel-storage
+                  subPath: /laravel-storage
+                  readOnly: false
+
+            livenessProbe:
+              httpGet:
+                path: /healthz
+                port: 80
+              initialDelaySeconds: 3
+              periodSeconds: 5
+
+        volumes:
+          - name: laravel-storage
+            size: "256Mi"
+
+        service:
+          ports:
+          - port: 80
+
+        replicas: 1
+        autoScaling:
+          horizontal:
+            maxReplicas: 20
+            averageMemory: 60
+
+        ingress:
+          rules:
+            - host: e-voting.gumbo-millennium.nl
+          annotations:
+            kubernetes.io/ingress.global-static-ip-name: evoting-public
+            networking.gke.io/managed-certificates: evoting-ssl
+
+  # MySQL server
+  - name: "mysql"
+    helm:
+      componentChart: true
+      values:
+        containers:
+          - image: mysql:8
+
+            env:
+              - name: MYSQL_DATABASE
+                value: laravel
+              - name: MYSQL_USER
+                value: laravel
+              - name: MYSQL_PASSWORD
+                value: laravel
+              - name: MYSQL_RANDOM_ROOT_PASSWORD
+                value: 'true'
+
+            volumeMounts:
+              - containerPath: /var/lib/mysql
+                volume:
+                  name: mysql-storage
+                  subPath: /mysql
+                  readOnly: false
+
+            livenessProbe:
+              exec:
+                command:
+                - mysqladmin
+                - -u "$MYSQL_USER" \
+                - -p"$MYSQL_PASSWORD" \
+                - ping
+              initialDelaySeconds: 3
+              periodSeconds: 5
+
+        volumes:
+          - name: mysql-storage
+            size: "512Mi"
+
+        service:
+          ports:
+          - port: 3306
+
+  # Redis cache server
+  - name: "redis"
+    helm:
+      componentChart: true
+      values:
+        containers:
+          - image: redis:5.0
+
+        service:
+          ports:
+          - port: 6379
+dev:
+  ports:
+    - imageName: app
+      forward:
+        - port: 8080
+          remotePort: 80
+  open:
+  - url: http://localhost:8080
+  sync:
+    - imageName: app
+      excludePaths:
+        - .git/
+      uploadExcludePaths:
+        - node_modules/
+        - vendor/
+        - .dockerignore
+        - .vscode/
+        - tests/
+        - devspace.yaml
+      onUpload:
+        restartContainer: true
+
+profiles:
+  - name: production
+    patches:
+      - op: remove
+        path: images.app.appendDockerfileInstructions
+      - op: remove
+        path: images.app.injectRestartHelper
+      - op: add
+        path: images.app.tags
+        value: 'prod-#####'
+  - name: interactive
+    patches:
+      - op: add
+        path: dev.interactive
+        value:
+          defaultEnabled: true
+
+commands:
+  - name: php
+    command: devspace enter php
+  - name: artisan
+    command: devspace enter php artisan

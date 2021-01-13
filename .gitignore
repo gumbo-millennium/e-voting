@@ -19,3 +19,7 @@ yarn-error.log
 
 # IDE helper
 _ide_helper_models.php
+
+
+# Ignore DevSpace cache and log folder
+.devspace/
