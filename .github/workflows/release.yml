@@ -1,0 +1,40 @@
+name: "Build and push Docker image"
+
+on:
+  releases:
+    - created
+
+jobs:
+  bundle:
+    name: "Bundle application"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Node dependencies
+        run: npm clean-install
+
+      - name: Build Front-end
+        run: npm run-script build
+
+      - name: Build image
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          docker build \
+            --tag docker.pkg.github.com/gumbo-millennium/e-voting/app:${RELEASE_TAG} \
+            --progress plain \
+            --file .cloud/Dockerfile \
+            $( pwd )
+
+      - name: Login to GitHub Packages Docker Registry
+        uses: docker/login-action@v1
+        with:
+          registry: docker.pkg.github.com
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push newly created tag
+        run: docker push docker.pkg.github.com/gumbo-millennium/e-voting/app
