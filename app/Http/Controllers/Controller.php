@@ -17,6 +17,7 @@ class Controller extends BaseController
 
     /**
      * Flashes a message, allows arguments just like sprintf
+     *
      * @param string $notice
      * @param scalar|null $args
      * @return void

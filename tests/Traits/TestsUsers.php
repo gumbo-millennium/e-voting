@@ -10,6 +10,7 @@ trait TestsUsers
 {
     /**
      * Makes a new poll
+     *
      * @return Poll
      */
     protected function createUser(
@@ -24,14 +25,15 @@ trait TestsUsers
             'is_admin' => $canProxy,
             'is_monitor' => $canAdmin,
             'can_proxy' => $canMonitor,
-            'is_present' => $isPresent
+            'is_present' => $isPresent,
         ]);
     }
 
     /**
      * Sets the proxy for a given user
+     *
      * @param User $user
-     * @param null|User $proxy
+     * @param User|null $proxy
      * @return void
      */
     protected function assignProxy(User $user, ?User $proxy): void
@@ -53,6 +55,7 @@ trait TestsUsers
 
     /**
      * Flags user as present
+     *
      * @param User $user
      * @param bool $present
      * @return void
@@ -66,6 +69,7 @@ trait TestsUsers
 
     /**
      * Flags user as present
+     *
      * @param User $user
      * @param bool $present
      * @return void
@@ -79,6 +83,7 @@ trait TestsUsers
 
     /**
      * Flags user as present
+     *
      * @param User $user
      * @param bool $present
      * @return void
@@ -92,6 +97,7 @@ trait TestsUsers
 
     /**
      * Flags user as present
+     *
      * @param User $user
      * @param bool $voter
      * @return void
@@ -105,6 +111,7 @@ trait TestsUsers
 
     /**
      * Flags user as present
+     *
      * @param User $user
      * @param bool $canProxy
      * @return void

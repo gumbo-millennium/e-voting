@@ -18,6 +18,7 @@ class UserController extends AdminController
 
     /**
      * Lists a filterable set of users
+     *
      * @param Request $request
      * @return Response
      */
@@ -30,6 +31,7 @@ class UserController extends AdminController
 
     /**
      * Shows the given user's details
+     *
      * @param User $user
      * @return void
      */
@@ -50,6 +52,7 @@ class UserController extends AdminController
 
     /**
      * Sets or unsets the proxy for this user
+     *
      * @param Request $request
      * @param User $user
      * @return RedirectResponse
@@ -61,7 +64,7 @@ class UserController extends AdminController
         // Validate request
         $valid = $request->validate([
             'action' => ['required', Rule::in('unset', 'set')],
-            'user_id' => ['required_if:action,set', 'exists:users,id']
+            'user_id' => ['required_if:action,set', 'exists:users,id'],
         ]);
 
         // Get action
@@ -125,7 +128,7 @@ class UserController extends AdminController
     {
         // Validate request
         $valid = $request->validate([
-            'action' => ['required', Rule::in('unset', 'set')]
+            'action' => ['required', Rule::in('unset', 'set')],
         ]);
 
         // Check if possible
@@ -149,6 +152,7 @@ class UserController extends AdminController
 
     /**
      * Update the request
+     *
      * @return RedirectResponse
      */
     public function requestUpdate()
@@ -169,7 +173,7 @@ class UserController extends AdminController
         // Call the command
         try {
             $ok = Artisan::call('vote:create-users', [
-                '--update' => true
+                '--update' => true,
             ]);
 
             // Run the command
@@ -189,6 +193,7 @@ class UserController extends AdminController
 
     /**
      * Mark all users as absent
+     *
      * @param Request $request
      * @return RedirectResponse
      */

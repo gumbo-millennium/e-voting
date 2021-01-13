@@ -15,6 +15,7 @@ class UserPolicy
 
     /**
      * Create a new policy instance.
+     *
      * @return void
      */
     public function __construct()
@@ -25,6 +26,7 @@ class UserPolicy
     /**
      * Checks if $user can change the presence of a user. Allowed for admins outside
      * of voting windows
+     *
      * @param User $user
      * @return bool
      * @throws BindingResolutionException
@@ -43,9 +45,10 @@ class UserPolicy
      * Checks if $user can set $proxy as a proxy of $target. $proxy can be null
      * to unset a proxy. Disallowed if $user is not an admin, if a vote is running,
      * if $target can't vote or if (when provided) $proxy can't be a proxy
+     *
      * @param User $user
      * @param User $target
-     * @param null|User $proxy
+     * @param User|null $proxy
      * @return bool
      */
     public function setProxy(User $user, User $target, ?User $proxy): bool
@@ -81,6 +84,7 @@ class UserPolicy
 
     /**
      * Indicates if a User can be marked as monitor (who checks the system)
+     *
      * @param User $user
      * @param User $target
      * @return bool

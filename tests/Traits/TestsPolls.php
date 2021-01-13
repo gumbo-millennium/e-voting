@@ -13,6 +13,7 @@ trait TestsPolls
 {
     /**
      * Makes a new poll
+     *
      * @return Poll
      */
     protected function createPoll(): Poll
@@ -21,14 +22,15 @@ trait TestsPolls
             'title' => sprintf(
                 '[test] Random test poll at %s',
                 Date::now()->toFormattedDateString()
-            )
+            ),
         ]);
     }
 
     /**
      * Starts the given poll with the given number of votes
+     *
      * @param Poll $poll
-     * @param null|int $votes
+     * @param int|null $votes
      * @return void
      * @throws Exception
      */
@@ -40,8 +42,9 @@ trait TestsPolls
 
     /**
      * Ends the given poll
+     *
      * @param Poll $poll
-     * @param null|int $votes
+     * @param int|null $votes
      * @return void
      * @throws Exception
      */
@@ -53,6 +56,7 @@ trait TestsPolls
 
     /**
      * Creates a set of random votes
+     *
      * @param Poll $poll
      * @param int $votes
      * @return void
@@ -62,7 +66,7 @@ trait TestsPolls
         for ($i = 0; $i < $votes; $i++) {
             PollVote::create([
                 'poll_id' => $poll->id,
-                'vote' => Arr::random(array_keys(PollVote::VALID_VOTES))
+                'vote' => Arr::random(array_keys(PollVote::VALID_VOTES)),
             ]);
         }
     }

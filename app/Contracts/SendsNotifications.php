@@ -8,6 +8,7 @@ interface SendsNotifications
 {
     /**
      * Check if the given recipient can receive a new code
+     *
      * @param string $recipient
      * @return bool
      */
@@ -15,6 +16,7 @@ interface SendsNotifications
 
     /**
      * Sends a message to the given phone number
+     *
      * @param string $recipient Phone number, in E164 format
      * @param string $message The message to send
      * @return bool True if sending went OK

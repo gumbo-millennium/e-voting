@@ -22,6 +22,7 @@ class AdminPollList extends Component
 
     /**
      * Returns a paginated collection of polls
+     *
      * @return LengthAwarePaginator
      * @throws InvalidArgumentException
      */
@@ -74,6 +75,7 @@ class AdminPollList extends Component
 
     /**
      * Render
+     *
      * @return View|Factory
      * @throws BindingResolutionException
      */

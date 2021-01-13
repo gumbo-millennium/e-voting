@@ -14,8 +14,8 @@ class EligibleUsers
     {
         $this->presentVoters = $voters;
         $this->presentProxies = $proxies;
-        $this->totalVotes = $totalVotes ?? ($voters + $proxies);
+        $this->totalVotes = $totalVotes ?? $voters + $proxies;
 
-        \assert($this->totalVotes === ($this->presentProxies + $this->presentVoters));
+        \assert($this->totalVotes === $this->presentProxies + $this->presentVoters);
     }
 }

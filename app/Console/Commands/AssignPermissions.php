@@ -15,18 +15,21 @@ class AssignPermissions extends ProductionCommand
 
     /**
      * The name and signature of the console command.
+     *
      * @var string
      */
     protected $signature = 'vote:assign-permissions';
 
     /**
      * The console command description.
+     *
      * @var string
      */
     protected $description = 'Assigns vote and admin permissions for existing users';
 
     /**
      * Execute the console command.
+     *
      * @return int
      */
     public function handle(ConscriboService $service)
@@ -38,7 +41,7 @@ class AssignPermissions extends ProductionCommand
         User::query()->update([
             'is_voter' => false,
             'is_admin' => false,
-            'can_proxy' => false
+            'can_proxy' => false,
         ]);
 
         // Get all users

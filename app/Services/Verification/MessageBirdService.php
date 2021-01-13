@@ -20,6 +20,7 @@ class MessageBirdService implements SendsNotifications
 
     /**
      * Returns clients or throws a fit if token is unset
+     *
      * @return MessagebirdClient
      * @throws RuntimeException
      */
@@ -46,7 +47,8 @@ class MessageBirdService implements SendsNotifications
     /**
      * Makes a new service, using the given client if specified. A client
      * will be created from config if not set.
-     * @param null|MessagebirdClient $client
+     *
+     * @param MessagebirdClient|null $client
      * @return void
      */
     public function __construct(?MessagebirdClient $client = null)
@@ -85,7 +87,7 @@ class MessageBirdService implements SendsNotifications
         // Log what we're sending
         Log::info("Sending {message} to {recipient}.", [
             'message' => $body,
-            'recipient' => $recipient
+            'recipient' => $recipient,
         ]);
 
         // Send verification
@@ -103,7 +105,7 @@ class MessageBirdService implements SendsNotifications
             // Report failure in log
             Log::warn('Login token sending failed: {exception}', [
                 'exception' => $exception,
-                'phone' => $recipient
+                'phone' => $recipient,
             ]);
 
             // Fail

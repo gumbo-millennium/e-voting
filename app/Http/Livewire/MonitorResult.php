@@ -22,12 +22,13 @@ class MonitorResult extends Component
     public function render()
     {
         return view('livewire.monitor-result', [
-            'results' => $this->expand ? $this->poll->calculateResults() : null
+            'results' => $this->expand ? $this->poll->calculateResults() : null,
         ]);
     }
 
     /**
      * Set expand
+     *
      * @param bool $expand
      * @return void
      */
@@ -38,6 +39,7 @@ class MonitorResult extends Component
 
     /**
      * Set the result
+     *
      * @param Request $request
      * @param string $result
      * @return RedirectResponse

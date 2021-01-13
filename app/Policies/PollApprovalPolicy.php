@@ -15,6 +15,7 @@ class PollApprovalPolicy
 
     /**
      * Check if creating a new poll approval is allowed
+     *
      * @param User $user
      * @param Poll $poll
      * @return bool
@@ -29,7 +30,7 @@ class PollApprovalPolicy
         // Disallow if already exists
         return !PollApproval::where([
             'user_id' => $user->id,
-            'poll_id' => $poll->id
+            'poll_id' => $poll->id,
         ])->exists();
     }
 }

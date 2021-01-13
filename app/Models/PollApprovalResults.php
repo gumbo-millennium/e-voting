@@ -25,7 +25,23 @@ class PollApprovalResults implements JsonSerializable
     }
 
     /**
+     * @inheritdoc
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'positive' => $this->positive,
+            'negative' => $this->negative,
+            'neutral' => $this->neutral,
+            'total' => $this->total,
+            'approvals' => $this->approvals,
+        ];
+    }
+
+    /**
      * Convert approvals to an array
+     *
      * @param iterable $approvals
      * @return void
      */
@@ -37,27 +53,12 @@ class PollApprovalResults implements JsonSerializable
                 $out[] = [
                 $approve->created_at->format('d-m-Y H:i:s (T)'),
                 $approve->user->name,
-                $approve->result_name
+                $approve->result_name,
                 ];
             } elseif (is_array($approve)) {
                 $out[] = $approve;
             }
         }
         $this->approvals = $out;
-    }
-
-    /**
-     * @inheritdoc
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        return [
-            'positive' => $this->positive,
-            'negative' => $this->negative,
-            'neutral' => $this->neutral,
-            'total' => $this->total,
-            'approvals' => $this->approvals
-        ];
     }
 }

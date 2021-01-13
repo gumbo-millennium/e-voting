@@ -22,6 +22,7 @@ class AdminUserList extends Component
     /**
      * Returns a collection of users for the given filters and
      * search query
+     *
      * @return LengthAwarePaginator<User>
      */
     public function getUsersProperty(): LengthAwarePaginator
@@ -66,12 +67,13 @@ class AdminUserList extends Component
 
     /**
      * Render the livewire list
+     *
      * @return View|Factory
      */
     public function render()
     {
         return view('livewire.admin-user-list', [
-            'scores' => User::getEligibleUsers()
+            'scores' => User::getEligibleUsers(),
         ]);
     }
 }

@@ -16,6 +16,7 @@ class PollPolicy
 
     /**
      * Determine whether the user can view any models.
+     *
      * @param  \App\Models\User  $user
      * @return mixed
      */
@@ -26,6 +27,7 @@ class PollPolicy
 
     /**
      * Determine whether the user can view the model.
+     *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Poll  $poll
      * @return mixed
@@ -48,9 +50,10 @@ class PollPolicy
 
     /**
      * Determine whether the user can, or could, vote for this poll
+     *
      * @param User $user
      * @param Poll $poll
-     * @param null|User $proxy User to vote for
+     * @param User|null $proxy User to vote for
      * @return bool
      */
     public function vote(User $user, Poll $poll, ?User $proxy = null): bool
@@ -75,55 +78,11 @@ class PollPolicy
     }
 
     /**
-     * Returns true if $user can vote for itself
-     * @param User $user
-     * @param Poll $poll
-     * @return bool
-     */
-    private function voteSelf(User $user): bool
-    {
-        // Only if voting is allowed
-        if (!$user->is_voter) {
-            return false;
-        }
-
-        // Reject if user is proxied
-        if ($user->proxy_id !== null) {
-            return false;
-        }
-
-        // Only if not yet voted
-        return true;
-    }
-
-    /**
-     * Returns true if $user can vote for an external user $proxy as it's proxy
-     * @param User $user
-     * @param Poll $poll
-     * @return bool
-     */
-    private function voteProxy(User $user, User $proxy): bool
-    {
-        // Only if the user can proxy and is the proxy
-        if (!$user->can_proxy || !$user->proxyFor->is($proxy)) {
-            dump('user');
-            return false;
-        }
-
-        // Only if proxy can vote
-        if (!$proxy->is_voter) {
-            return false;
-        }
-
-        // Only if not yet voted
-        return true;
-    }
-
-    /**
      * Returns true if the user can still cast a vote
+     *
      * @param User $user
      * @param Poll $poll
-     * @param null|User $proxy
+     * @param User|null $proxy
      * @return bool
      */
     public function castVote(User $user, Poll $poll, ?User $proxy = null): bool
@@ -139,6 +98,7 @@ class PollPolicy
 
     /**
      * Determine whether the user can create models.
+     *
      * @param User $user
      * @return mixed
      */
@@ -149,6 +109,7 @@ class PollPolicy
 
     /**
      * Determine whether the user can open the poll
+     *
      * @param User $user
      * @param Poll $poll
      * @return mixed
@@ -166,6 +127,7 @@ class PollPolicy
 
     /**
      * Determine whether the user can open the poll
+     *
      * @param User $user
      * @param Poll $poll
      * @return mixed
@@ -185,6 +147,7 @@ class PollPolicy
 
     /**
      * Determine whether the user can delete the model.
+     *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Poll  $poll
      * @return mixed
@@ -202,6 +165,7 @@ class PollPolicy
 
     /**
      * Can the user make a judgement on the validity of this poll?
+     *
      * @param User $user
      * @param Poll $poll
      * @return bool
@@ -233,6 +197,7 @@ class PollPolicy
 
     /**
      * Can the user approve the poll, and actually submit one?
+     *
      * @param User $user
      * @param Poll $poll
      * @return bool
@@ -250,6 +215,7 @@ class PollPolicy
 
     /**
      * Can the user complete the given poll
+     *
      * @param User $user
      * @param Poll $poll
      * @return bool
@@ -281,6 +247,7 @@ class PollPolicy
 
     /**
      * Can we actually complete this poll?
+     *
      * @param User $user
      * @param Poll $poll
      * @return bool
@@ -294,6 +261,7 @@ class PollPolicy
 
     /**
      * Can the user download
+     *
      * @param User $user
      * @param Poll $poll
      * @return void
@@ -312,5 +280,52 @@ class PollPolicy
             && $poll->started_at < Date::now()
             && $poll->ended_at < Date::now()
             && $poll->completed_at < Date::now();
+    }
+
+    /**
+     * Returns true if $user can vote for itself
+     *
+     * @param User $user
+     * @param Poll $poll
+     * @return bool
+     */
+    private function voteSelf(User $user): bool
+    {
+        // Only if voting is allowed
+        if (!$user->is_voter) {
+            return false;
+        }
+
+        // Reject if user is proxied
+        if ($user->proxy_id !== null) {
+            return false;
+        }
+
+        // Only if not yet voted
+        return true;
+    }
+
+    /**
+     * Returns true if $user can vote for an external user $proxy as it's proxy
+     *
+     * @param User $user
+     * @param Poll $poll
+     * @return bool
+     */
+    private function voteProxy(User $user, User $proxy): bool
+    {
+        // Only if the user can proxy and is the proxy
+        if (!$user->can_proxy || !$user->proxyFor->is($proxy)) {
+            dump('user');
+            return false;
+        }
+
+        // Only if proxy can vote
+        if (!$proxy->is_voter) {
+            return false;
+        }
+
+        // Only if not yet voted
+        return true;
     }
 }

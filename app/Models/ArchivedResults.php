@@ -10,8 +10,9 @@ class ArchivedResults implements JsonSerializable
 {
     /**
      * Creates the results from the poll
+     *
      * @param Poll $poll
-     * @return null|ArchivedResults
+     * @return ArchivedResults|null
      */
     public static function create(Poll $poll): ?self
     {

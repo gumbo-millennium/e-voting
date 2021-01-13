@@ -10,6 +10,7 @@ trait ChecksIfVoteIsRunning
 {
     /**
      * Returns true if a vote is running
+     *
      * @return bool
      * @throws InvalidArgumentException
      */

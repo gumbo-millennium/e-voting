@@ -14,6 +14,7 @@ declare(strict_types=1);
 */
 
 $app = new Illuminate\Foundation\Application(
+    // phpcs:ignore SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable.DisallowedSuperGlobalVariable
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
 

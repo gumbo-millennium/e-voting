@@ -14,24 +14,27 @@ class UserVote extends Model
 {
     /**
      * The attributes that should be cast.
+     *
      * @var array
      */
     protected $casts = [
         'poll_id' => 'int',
-        'user_id' => 'int'
+        'user_id' => 'int',
     ];
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array<string>
      */
     protected $fillable = [
         'poll_id',
-        'user_id'
+        'user_id',
     ];
 
     /**
      * Associated poll
+     *
      * @return BelongsTo<Poll>
      */
     public function poll(): BelongsTo
@@ -41,6 +44,7 @@ class UserVote extends Model
 
     /**
      * Associated user
+     *
      * @return BelongsTo<User>
      */
     public function user(): BelongsTo

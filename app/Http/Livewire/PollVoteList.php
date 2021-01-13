@@ -16,6 +16,7 @@ class PollVoteList extends Component
 {
     /**
      * Returns the active polls
+     *
      * @return Collection
      */
     public function getPollsProperty(): Collection
@@ -30,6 +31,7 @@ class PollVoteList extends Component
 
     /**
      * Render the view
+     *
      * @return View|Factory|RedirectResponse
      */
     public function render()

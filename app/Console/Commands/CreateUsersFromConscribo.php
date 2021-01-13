@@ -19,6 +19,7 @@ class CreateUsersFromConscribo extends ProductionCommand
 
     /**
      * The name and signature of the console command.
+     *
      * @var string
      */
     protected $signature = <<<'CMD'
@@ -29,12 +30,14 @@ class CreateUsersFromConscribo extends ProductionCommand
 
     /**
      * The console command description.
+     *
      * @var string
      */
     protected $description = 'Pulls data from Conscribo, optionally only updates or prunes missing.';
 
     /**
      * Execute the console command.
+     *
      * @return int
      */
     public function handle(ConscriboService $service)
@@ -48,7 +51,7 @@ class CreateUsersFromConscribo extends ProductionCommand
         $this->createOrUpdateUsersWithRoles(
             $service,
             $people,
-            ((bool) $this->option('update')) === false
+            (bool) $this->option('update') === false
         );
 
         // Remove excess if --prune
@@ -95,6 +98,7 @@ class CreateUsersFromConscribo extends ProductionCommand
 
     /**
      * Update or create users
+     *
      * @param Collection<array> $users
      * @param Collection<array<int>> $roles
      * @param bool $allowCreation
@@ -190,9 +194,11 @@ class CreateUsersFromConscribo extends ProductionCommand
 
             // Add counts
             $parseCount++;
-            if ($user->wasRecentlyCreated) {
-                $newCount++;
+            if (!$user->wasRecentlyCreated) {
+                continue;
             }
+
+            $newCount++;
         }
 
         // Re-enable protections

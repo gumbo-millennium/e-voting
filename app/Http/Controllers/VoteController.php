@@ -10,6 +10,7 @@ class VoteController extends Controller
 {
     /**
      * Index page, shows a 'welcome' if not logged in
+     *
      * @param Request $request
      * @return Response
      */

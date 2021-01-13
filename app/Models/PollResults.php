@@ -22,27 +22,6 @@ class PollResults
         $this->setVotes($votes);
     }
     /**
-     * Convert approvals to an array
-     * @param iterable $votes
-     * @return void
-     */
-    private function setVotes(iterable $votes): void
-    {
-        $out = [];
-        foreach ($votes as $vote) {
-            if ($vote instanceof PollVote) {
-                $out[] = [
-                    $vote->created_at->format('d-m-Y H:i:s (T)'),
-                    $vote->vote_label
-                ];
-            } elseif (is_array($vote)) {
-                $out[] = $vote;
-            }
-        }
-        $this->votes = $out;
-    }
-
-    /**
      * @inheritdoc
      * @return array
      */
@@ -53,7 +32,29 @@ class PollResults
             'against' => $this->against,
             'blank' => $this->blank,
             'total' => $this->total,
-            'votes' => $this->votes
+            'votes' => $this->votes,
         ];
+    }
+
+    /**
+     * Convert approvals to an array
+     *
+     * @param iterable $votes
+     * @return void
+     */
+    private function setVotes(iterable $votes): void
+    {
+        $out = [];
+        foreach ($votes as $vote) {
+            if ($vote instanceof PollVote) {
+                $out[] = [
+                    $vote->created_at->format('d-m-Y H:i:s (T)'),
+                    $vote->vote_label,
+                ];
+            } elseif (is_array($vote)) {
+                $out[] = $vote;
+            }
+        }
+        $this->votes = $out;
     }
 }
