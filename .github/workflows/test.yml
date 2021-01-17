@@ -155,4 +155,4 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push newly created tag
-        run: docker push docker.pkg.github.com/gumbo-millennium/e-voting/app
+        run: docker push docker.pkg.github.com/gumbo-millennium/e-voting/app:dev-${GITHUB_SHA}
