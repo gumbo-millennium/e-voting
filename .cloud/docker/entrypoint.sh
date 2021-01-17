@@ -29,7 +29,7 @@ php /var/www/laravel/artisan optimize
 
 echo " ============== SUPPLY ============== "
 echo "Pulling users if required"
-php /var/www/laravel/artisan evoting:auto-seed
+php /var/www/laravel/artisan vote:prep-gcr
 
 echo " ============== LAUNCHING ============== "
 exec supervisord -c /etc/supervisor/supervisord.conf $@
