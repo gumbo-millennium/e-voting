@@ -22,6 +22,26 @@ is_set "Conscribo Site" $CONSCRIBO_ACCOUNT
 is_set "Conscribo User" $CONSCRIBO_USERNAME
 is_set "Conscribo Pass" $CONSCRIBO_PASSWORD
 
+echo " ============== SELF-CHECK ============== "
+if [ -z "$APP_KEY" ]; then
+    echo "Application key NOT SET\!"
+    echo "Creating one for now..."
+    php /var/www/laravel/artisan key:generate
+else
+    echo "Application key SET"
+fi
+
+if [ "$GOOGLE_CLOUD" = "run" ]; then
+    echo " ============== GOOGLE CONFIG ============== "
+
+    # Use the PORT environment variable in Apache configuration files.
+    # https://cloud.google.com/run/docs/reference/container-contract#port
+    echo "Replacing port with requested port ${PORT}"
+    sed -i -r "s/listen [0-9]+;/listen ${PORT};/g" \
+        /etc/nginx/sites-available/*
+fi
+
+
 echo " ============== PRE-LAUNCH ============== "
 echo "Migrating and optimizing application"
 php /var/www/laravel/artisan migrate --force

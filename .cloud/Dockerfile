@@ -1,12 +1,10 @@
 FROM php:8.0-fpm AS main
 
-# Set working directory
-WORKDIR /var/www/html
-
 # Install container dependencies
 RUN apt-get update \
     && apt-get install -y \
         git \
+        moreutils \
         nginx \
         sudo \
         supervisor \
@@ -61,6 +59,7 @@ RUN docker-php-ext-configure gd \
         curl \
         dom \
         gd \
+        intl \
         mbstring \
         mysqli \
         pcntl \
@@ -79,22 +78,33 @@ RUN pecl install redis \
 # Use production PHP
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# Enable nginx
+# Copy PHP-FPM config and self test
+COPY ./.cloud/docker/fpm/docker-pool.conf $PHP_INI_DIR/../php-fpm.d/zz-docker.conf
+RUN php-fpm --test
+
+# Enable nginx and self test
 RUN sed -i "s/worker_processes /daemon off;\nworker_processes /" /etc/nginx/nginx.conf
-COPY ./.cloud/docker/nginx/default.conf /etc/nginx/sites-available/default.conf
+COPY ./.cloud/docker/nginx/default.conf /etc/nginx/sites-available/default
+RUN nginx -t
 
 #  Install Supervisor configs
 COPY ./.cloud/docker/supervisor/*.conf /etc/supervisor/conf.d/
 COPY ./.cloud/docker/entrypoint.sh /bin/entrypoint.sh
 
-# Add source code files to WORKDIR
+# Set working directory and assign proper permissions
+WORKDIR /var/www/laravel
+RUN chown www-data:www-data /var/www/laravel
+
+# Add files and directories to image
 COPY --chown=www-data:www-data . .
+
+# Copy a default environment file
 RUN cp .env.example .env
 
 # Install composer dependencies
 RUN sudo -u www-data -- composer install \
+    --ignore-platform-req=php \
     --classmap-authoritative \
-    --ignore-platform-reqs \
     --no-dev \
     --no-interaction \
     --no-plugins \
@@ -107,6 +117,8 @@ EXPOSE 80
 ENTRYPOINT ["/bin/entrypoint.sh"]
 
 FROM main AS google-cloud-run
+
+ENV GOOGLE_CLOUD=run
 
 RUN docker-php-ext-install -j "$( nproc )" opcache
 
@@ -124,8 +136,3 @@ RUN set -ex; \
     echo "; Configure Opcache Memory (Application-specific)"; \
     echo "opcache.memory_consumption = 32"; \
   } > "$PHP_INI_DIR/conf.d/cloud-run.ini"
-
-# Use the PORT environment variable in Apache configuration files.
-# https://cloud.google.com/run/docs/reference/container-contract#port
-RUN sed -i 's/80/${PORT}/g' \
-    /etc/nginx/sites-available/default.conf

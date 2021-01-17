@@ -17,3 +17,8 @@ vendor/
 .github/
 .vscode/
 tests/
+
+# Exclude front-end and dev stuff
+/server.php
+/*.xml
+/*.js
