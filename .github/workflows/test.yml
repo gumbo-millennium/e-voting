@@ -144,3 +144,59 @@ jobs:
         run: |
           test -d dist || mkdir dist
           vendor/bin/phpunit --coverage-clover ./dist/coverage-clover.xml
+
+  terraform:
+    name: "Validate Terraform Configuration"
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_cloud_sql_database: test
+      TF_VAR_cloud_sql_username: test
+      TF_VAR_cloud_sql_password: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Format
+        run: terraform -chdir=.cloud/terraform fmt -check
+
+  bundle:
+    name: "Bundle application"
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ github.event_name == 'pull_request' }}
+    needs:
+      - frontend
+      - backend
+      - terraform
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Node dependencies
+        run: npm clean-install
+
+      - name: Build Front-end
+        run: npm run-script build
+
+      - name: Build image
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          docker build \
+            --tag docker.pkg.github.com/gumbo-millennium/e-voting/app:dev-${GITHUB_SHA} \
+            --progress plain \
+            --file .cloud/Dockerfile \
+            $( pwd )
+
+      - name: Login to GitHub Packages Docker Registry
+        uses: docker/login-action@v1
+        with:
+          registry: docker.pkg.github.com
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push newly created tag
+        run: docker push docker.pkg.github.com/gumbo-millennium/e-voting/app:dev-${GITHUB_SHA}

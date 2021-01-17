@@ -6,11 +6,21 @@ on:
       - created
 
 env:
+  # Docker tags
   RELEASE_TAG: ${{ github.event.release.tag_name }}
   RELEASE_HASH: ${{ github.sha }}
+
+  # Google Container Repository values
   PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
   SERVICE: evoting
   GCR_REGION: eu
+
+  # Terraform values
+  TF_VAR_project: ${{ secrets.GOOGLE_PROJECT_ID }}
+  TF_VAR_container_name: evoting
+  TF_VAR_container_version:  ${{ github.sha }}
+  TF_VAR_container_region: eu
+  TF_VAR_app_prefix: vote2021-release
 
 jobs:
   build-frontend:
@@ -116,3 +126,54 @@ jobs:
           docker push ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:${RELEASE_HASH}
           docker push ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:${RELEASE_TAG}
           docker push ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:latest
+
+  deploy-terraform:
+    name: "Deploy Terraform application"
+    runs-on: ubuntu-latest
+    environment: production
+    needs:
+      - build-gcr-image
+
+    env:
+      # Secret based
+      TF_VAR_cloud_sql_database: ${{ secrets.SQL_DATABASE }}
+      TF_VAR_cloud_sql_username: ${{ secrets.SQL_USERNAME }}
+      TF_VAR_cloud_sql_password: ${{ secrets.SQL_PASSWORD }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          export_default_credentials: true
+
+      - name: Register Google Application Credentials in env
+        run: echo "TF_VAR_credentials_file=${GOOGLE_APPLICATION_CREDENTIALS}" >> $GITHUB_ENV
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+          cli_config_credentials_token: ${{ secrets.TERRAFORM_CLI_TOKEN }}
+
+      - name: Validate Terraform formatting
+        run: terraform -chdir=.cloud/terraform fmt -check
+
+      - name: Initialize Terraform
+        run: terraform -chdir=.cloud/terraform init -input=false
+
+      - name: Validate Terraform configuration
+        run: terraform -chdir=.cloud/terraform validate
+
+      - name: Refresh Terraform deployment information
+        run: terraform -chdir=.cloud/terraform refresh
+
+      - name: Plan Terraform deployment
+        run: terraform -chdir=.cloud/terraform plan
+
+      - name: Apply Terraform deployment
+        run: terraform -chdir=.cloud/terraform apply -auto-approve
