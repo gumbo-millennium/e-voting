@@ -1,4 +1,4 @@
-FROM php:8.0-fpm
+FROM php:8.0-fpm AS main
 
 # Set working directory
 WORKDIR /var/www/html
@@ -55,7 +55,7 @@ RUN docker-php-ext-configure gd \
         --with-jpeg \
         --with-webp \
         --with-xpm \
-    && docker-php-ext-install \
+    && docker-php-ext-install -j "$( nproc )" \
         bcmath \
         ctype \
         curl \
@@ -105,3 +105,27 @@ EXPOSE 80
 
 # Container start command
 ENTRYPOINT ["/bin/entrypoint.sh"]
+
+FROM main AS google-cloud-run
+
+RUN docker-php-ext-install -j "$( nproc )" opcache
+
+RUN set -ex; \
+  { \
+    echo "; Cloud Run enforces memory & timeouts"; \
+    echo "memory_limit = -1"; \
+    echo "max_execution_time = 0"; \
+    echo "; File upload at Cloud Run network limit"; \
+    echo "upload_max_filesize = 32M"; \
+    echo "post_max_size = 32M"; \
+    echo "; Configure Opcache for Containers"; \
+    echo "opcache.enable = On"; \
+    echo "opcache.validate_timestamps = Off"; \
+    echo "; Configure Opcache Memory (Application-specific)"; \
+    echo "opcache.memory_consumption = 32"; \
+  } > "$PHP_INI_DIR/conf.d/cloud-run.ini"
+
+# Use the PORT environment variable in Apache configuration files.
+# https://cloud.google.com/run/docs/reference/container-contract#port
+RUN sed -i 's/80/${PORT}/g' \
+    /etc/nginx/sites-available/default.conf
