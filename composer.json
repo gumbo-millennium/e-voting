@@ -23,7 +23,8 @@
         "livewire/livewire": "^2.3",
         "messagebird/php-rest-api": "^1.19",
         "phpoffice/phpspreadsheet": "^1.15",
-        "spomky-labs/otphp": "^10.0"
+        "spomky-labs/otphp": "^10.0",
+        "superbalist/laravel-google-cloud-storage": "^2.2"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.8",
