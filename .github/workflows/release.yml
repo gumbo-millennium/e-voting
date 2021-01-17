@@ -1,8 +1,9 @@
-name: "Build and push Docker image"
+name: "Deploy application"
 
 on:
-  releases:
-    - created
+  release:
+    types:
+      - created
 
 env:
   RELEASE_TAG: ${{ github.event.release.tag_name }}
@@ -29,11 +30,11 @@ jobs:
       - name: Publish front-end
         uses: actions/upload-artifact@v2
         with:
-          name: my-artifact
+          name: frontend
           path: |
-            path/output/bin/
-            path/output/test-results
-            !path/**/*.tmp
+            public/css
+            public/js
+            public/mix-manifest.json
 
   build-github-image:
     name: "Build Docker image for GitHub"
@@ -47,8 +48,8 @@ jobs:
 
       - uses: actions/download-artifact@v2
         with:
-          name: front-end
-          path: path/to/artifact
+          name: frontend
+          path: public/
 
       - name: Build image for GitHub
         run: |
@@ -56,8 +57,8 @@ jobs:
             --tag docker.pkg.github.com/gumbo-millennium/e-voting/app:${RELEASE_HASH} \
             --tag docker.pkg.github.com/gumbo-millennium/e-voting/app:${RELEASE_TAG} \
             --tag docker.pkg.github.com/gumbo-millennium/e-voting/app:latest \
-            --progress plain \
             --file .cloud/Dockerfile \
+            --progress plain \
             --target main \
             .
 
@@ -86,8 +87,8 @@ jobs:
 
       - uses: actions/download-artifact@v2
         with:
-          name: front-end
-          path: path/to/artifact
+          name: frontend
+          path: public/
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@master
@@ -105,9 +106,9 @@ jobs:
             --tag ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:${RELEASE_HASH} \
             --tag ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:${RELEASE_TAG} \
             --tag ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:latest \
-            --progress plain \
             --file .cloud/Dockerfile \
-            --target main \
+            --progress plain \
+            --target google-cloud-run \
             .
 
       - name: Push image to Google Container Registry
