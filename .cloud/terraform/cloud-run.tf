@@ -1,6 +1,6 @@
 # Now create our Google Cloud Run service
 resource "google_cloud_run_service" "default" {
-  name     = "${var.app_prefix}-laravel-app"
+  name     = "${local.server_prefix}-laravel-app"
   location = var.region
 
   template {
@@ -30,6 +30,10 @@ resource "google_cloud_run_service" "default" {
         env {
           name  = "LOG_CHANNEL"
           value = "stackdriver"
+        }
+        env {
+          name  = "GOOGLE_CLOUD"
+          value = "run"
         }
 
         # Mail

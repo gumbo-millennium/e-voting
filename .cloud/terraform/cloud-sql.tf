@@ -1,6 +1,6 @@
 # Create a MySQL sever
 resource "google_sql_database_instance" "db_mysql" {
-  name                = "${var.app_prefix}-mysql"
+  name                = "${local.server_prefix}-mysql"
   database_version    = "MYSQL_8_0"
   deletion_protection = false
 
