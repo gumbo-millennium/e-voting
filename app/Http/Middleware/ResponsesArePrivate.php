@@ -12,6 +12,7 @@ class ResponsesArePrivate
 {
     /**
      * Handle an incoming request.
+     *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
      * @return mixed
@@ -29,7 +30,7 @@ class ResponsesArePrivate
                 'no_cache' => true,
                 'no_store' => true,
                 'no_transform' => true,
-                'max_age' => 0
+                'max_age' => 0,
             ]);
         }
 

@@ -19,12 +19,14 @@ final class VerificationService
 
     /**
      * Sending services
+     *
      * @var array<SendsNotifications>
      */
     private array $sendServices;
 
     /**
      * Creates a new service with the given sending service
+     *
      * @param array<SendsNotifications> $sendService
      */
     public function __construct(array $sendServices)
@@ -40,6 +42,7 @@ final class VerificationService
 
     /**
      * Returns true if the message can be sent
+     *
      * @param User $user
      * @return bool
      * @throws InvalidArgumentException
@@ -67,6 +70,7 @@ final class VerificationService
 
     /**
      * Sends the TOTP message to the user, returns if it was succesfully sent
+     *
      * @param User $user
      * @return bool
      * @throws InvalidArgumentException

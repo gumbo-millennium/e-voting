@@ -14,7 +14,7 @@ class PollApproval extends Model
 
     public const RESULTS = [
         'pass' => 'Goedgekeurd',
-        'reject' => 'Afgekeurd'
+        'reject' => 'Afgekeurd',
     ];
 
     public function poll(): BelongsTo

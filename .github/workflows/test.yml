@@ -1,0 +1,202 @@
+name: "Test Laravel application"
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - develop
+
+jobs:
+  frontend:
+    name: "Build front-end"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache node_modules
+        id: cache-node
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: node-build-${{ hashFiles('**/package-lock.lock') }}
+          restore-keys: |
+            node-build-${{ env.cache-name }}-
+            node-build-
+
+      - name: Copy environment config
+        run: cp .github/actions.env .env
+
+      - name: Install Yarn dependencies
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: npm clean-install
+
+      - name: Build Front-end
+        run: npm run-script build
+
+      - name: Publish front-end
+        uses: actions/upload-artifact@v2
+        with:
+          name: frontend
+          path: |
+            public/css
+            public/js
+            public/mix-manifest.json
+
+  backend:
+    name: "Build back-end"
+    runs-on: "ubuntu-latest"
+    needs:
+      - frontend
+    env:
+      DB_PORT: '3306'
+
+    strategy:
+      matrix:
+        php:
+          - '7.4'
+          - '8.0'
+
+    services:
+      database:
+        image: mysql:8
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+          MYSQL_DATABASE: laravel
+          MYSQL_USER: laravel
+          MYSQL_PASSWORD: laravel
+
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: exif, json, mbstring, bcmath, dom, fileinfo, mysql
+          coverage: pcov
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: frontend
+          path: public/
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Check for Gumbo Millennium typos
+        run: .github/find-typos.sh
+
+      - name: Cache Composer
+        uses: actions/cache@v1
+        with:
+          path: vendor
+          key: composer-build-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            composer-build-${{ env.cache-name }}-
+            composer-build-
+
+      - name: Extract dummy front-end
+        run: |
+          cd public
+          unzip ../.github/public.zip
+
+      - name: Copy environment config
+        run: cp .github/actions.env .env
+
+      - name: Install composer dependencies
+        run: |
+          composer install \
+            --no-progress \
+            --no-interaction \
+            --classmap-authoritative \
+            --ignore-platform-req=php
+
+      - name: Configure application
+        run: |
+          php artisan key:generate
+
+      - name: Wait for MySQL to get ready
+        timeout-minutes: 5
+        run: |
+          while ! mysqladmin --protocol=tcp --port=${DB_PORT} ping 2>/dev/null; do
+            echo "MySQL still offline, waiting 5 seconds";
+            sleep 5s;
+          done
+
+      - name: Prepare database
+        run: |
+          php artisan migrate
+          php artisan migrate:refresh
+          php artisan migrate --seed
+
+      - name: Run linters
+        run: composer run lint
+
+      - name: Test optimizing the config
+        run: |
+          php artisan optimize
+          php artisan optimize:clear
+
+      - name: Run unit tests
+        run: |
+          test -d dist || mkdir dist
+          vendor/bin/phpunit --coverage-clover ./dist/coverage-clover.xml
+
+  terraform:
+    name: "Validate Terraform Configuration"
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_cloud_sql_database: test
+      TF_VAR_cloud_sql_username: test
+      TF_VAR_cloud_sql_password: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Format
+        run: terraform -chdir=.cloud/terraform fmt -check
+
+  bundle:
+    name: "Bundle application"
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ github.event_name == 'pull_request' }}
+    needs:
+      - frontend
+      - backend
+      - terraform
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Node dependencies
+        run: npm clean-install
+
+      - name: Build Front-end
+        run: npm run-script build
+
+      - name: Build image
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          docker build \
+            --tag docker.pkg.github.com/gumbo-millennium/e-voting/app:dev-${GITHUB_SHA} \
+            --progress plain \
+            --file .cloud/Dockerfile \
+            $( pwd )
+
+      - name: Login to GitHub Packages Docker Registry
+        uses: docker/login-action@v1
+        with:
+          registry: docker.pkg.github.com
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push newly created tag
+        run: docker push docker.pkg.github.com/gumbo-millennium/e-voting/app:dev-${GITHUB_SHA}

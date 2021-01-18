@@ -28,6 +28,7 @@ class AdminPoll extends Component
     }
     /**
      * Opens the poll
+     *
      * @return void
      */
     public function open()
@@ -43,6 +44,7 @@ class AdminPoll extends Component
 
     /**
      * Closes the poll
+     *
      * @return void
      */
     public function close(): void
@@ -78,6 +80,7 @@ class AdminPoll extends Component
 
     /**
      * Removes the poll
+     *
      * @return void
      */
     public function delete(): void

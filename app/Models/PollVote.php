@@ -15,28 +15,31 @@ class PollVote extends Model
     public const VALID_VOTES = [
         'favor' => 'Voor',
         'against' => 'Tegen',
-        'blank' => 'Onthouding'
+        'blank' => 'Onthouding',
     ];
 
     /**
      * The attributes that should be cast.
+     *
      * @var array
      */
     protected $casts = [
-        'poll_id' => 'int'
+        'poll_id' => 'int',
     ];
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array<string>
      */
     protected $fillable = [
         'poll_id',
-        'vote'
+        'vote',
     ];
 
     /**
      * Associated poll
+     *
      * @return BelongsTo<Poll>
      */
     public function poll(): BelongsTo

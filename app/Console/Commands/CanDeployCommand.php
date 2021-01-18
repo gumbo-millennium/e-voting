@@ -13,18 +13,21 @@ class CanDeployCommand extends Command
 {
     /**
      * The name and signature of the console command.
+     *
      * @var string
      */
     protected $signature = 'vote:can-deploy';
 
     /**
      * The console command description.
+     *
      * @var string
      */
     protected $description = 'Checks if a new version can be deployed.';
 
     /**
      * Execute the console command.
+     *
      * @return int
      */
     public function handle()

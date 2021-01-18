@@ -2,16 +2,15 @@
 PORT = 8080
 
 test:
-	yarn install
-	yarn build
+	npm clean-install
+	npm run-script build
 	composer install -ao
 	vendor/bin/phpcs
 	vendor/bin/phpunit
 
 build:
-	yarn install
-	yarn run build
-	composer install --no-dev -ao
+	npm clean-install
+	npm run-script build
 	docker build \
 		-t gumbo-millennium/e-voting \
 		-t docker.io/gumbo-millennium/e-voting \

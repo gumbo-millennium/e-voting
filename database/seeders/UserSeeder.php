@@ -54,12 +54,13 @@ class UserSeeder extends Seeder
         'monitor' => [
             'name' => 'Monitor lid',
             'phone' => '0031 (0)6 49 66 30 16',
-            'is_monitor' => true
+            'is_monitor' => true,
         ],
     ];
 
     /**
      * Run the database seeds.
+     *
      * @return void
      */
     public function run(): void

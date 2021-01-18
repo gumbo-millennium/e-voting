@@ -17,11 +17,12 @@ trait ValidatesPhoneNumbers
 {
     /**
      * Validates the number and if it's valid, returns it in the given format.
+     *
      * @param string $phone
      * @param string $country Country code for the dialing country
-     * @param null|array $validTypes List of PhoneNumberType constants
+     * @param array|null $validTypes List of PhoneNumberType constants
      * @param int $format PhoneNumberFormat constant
-     * @return null|string
+     * @return string|null
      */
     protected function formatPhoneNumber(
         string $phone,

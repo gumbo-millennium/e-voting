@@ -14,6 +14,7 @@ declare(strict_types=1);
 */
 
 $app = new Illuminate\Foundation\Application(
+    // phpcs:ignore SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable.DisallowedSuperGlobalVariable
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
 
@@ -42,6 +43,18 @@ $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
     App\Exceptions\Handler::class
 );
+
+/*
+|--------------------------------------------------------------------------
+| Set Storage Path
+|--------------------------------------------------------------------------
+|
+| This script allows you to override the default storage location used by
+| the  application.  You may set the APP_STORAGE environment variable
+| in your .env file,  if not set the default location will be used
+|
+*/
+$app->useStoragePath(env('APP_STORAGE', base_path() . '/storage'));
 
 /*
 |--------------------------------------------------------------------------

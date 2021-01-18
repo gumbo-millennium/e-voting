@@ -37,6 +37,7 @@ class AuditController extends Controller
 
     /**
      * Ensure rate limits are applied
+     *
      * @return void
      */
     public function __construct()
@@ -46,6 +47,7 @@ class AuditController extends Controller
 
     /**
      * Returns long version
+     *
      * @return string
      * @throws BindingResolutionException
      * @throws LogicException
@@ -73,6 +75,7 @@ class AuditController extends Controller
 
     /**
      * Returns an audit log
+     *
      * @return View|Factory
      * @throws BindingResolutionException
      * @throws LogicException
@@ -95,17 +98,77 @@ class AuditController extends Controller
             ->view('audit', [
                 'version' => substr($gitVersion, 0, 7),
                 'status' => $gitStatus,
-                'sums' => $this->getFileChecksums()
+                'sums' => $this->getFileChecksums(),
             ])
             ->setPrivate()
             ->setExpires(Date::now()->addMinutes(15));
     }
 
     /**
+     * Downloads the active source code
+     */
+    public function download(): BinaryFileResponse
+    {
+        \abort(501);
+
+        // Get version
+        // Get a list of files
+        $files = $this->runCachedCommand('git ls-files');
+
+        // Fail with server error if no file list
+        if (empty($files) || Str::startsWith($files, 'Command failed')) {
+            throw new ServiceUnavailableHttpException(5, 'Kan niet communiceren met Git');
+        }
+
+        // Prep a tempfile
+        $zipFile = \storage_path(sprintf("audit-%s.zip", Str::uuid()));
+        touch($zipFile);
+
+        // Prep a zipfile
+        $zip = new ZipArchive();
+
+        // Add all files in the given dirs
+        $files = collect(explode(PHP_EOL, $files));
+        foreach ($files->chunk(25) as $fileChunk) {
+            // Open the zipfile
+            if ($zip->open($zipFile) !== true) {
+                @unlink($zipFile);
+                throw new ServiceUnavailableHttpException(5, 'Kan zip-bestand niet aanmaken');
+            }
+
+            // Add each file
+            foreach ($fileChunk as $file) {
+                $path = \base_path($file);
+                if (!\file_exists($path) || !is_file($path)) {
+                    continue;
+                }
+
+                $zip->addFile($file, realpath($path));
+            }
+
+            // Close the zip file after the chunk
+            if ($zip->close() !== true) {
+                @unlink($zipFile);
+                throw new ServiceUnavailableHttpException(5, 'Kan zip-bestand niet sluiten');
+            }
+        }
+
+        // Check file
+        if (!\file_exists($zipFile)) {
+            throw new NotFoundHttpException('Kan zip-bestand niet meer vinden');
+        }
+
+        // Send file
+        return \response()
+            ->file($zipFile, ['Content-Type' => 'application/zip'])
+            ->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'application-code.zip');
+    }
+    /**
      * Runs a command and caches the response
+     *
      * @param string $cmd
-     * @param null|DateTimeInterface $expire
-     * @return null|string
+     * @param DateTimeInterface|null $expire
+     * @return string|null
      */
     private function runCachedCommand(string $cmd, ?DateTimeInterface $expire = null): ?string
     {
@@ -144,6 +207,7 @@ class AuditController extends Controller
 
     /**
      * Returns all file checksums
+     *
      * @return array
      * @throws BindingResolutionException
      * @throws LogicException
@@ -169,69 +233,14 @@ class AuditController extends Controller
         sort($sums);
         $out = [];
         foreach ($sums as $checksum) {
-            if (preg_match('/^SHA1 \((.+?)\) = ([a-f0-9]{8,64})$/', $checksum, $matches)) {
-                $out[$matches[1]] = $matches[2];
+            if (!preg_match('/^SHA1 \((.+?)\) = ([a-f0-9]{8,64})$/', $checksum, $matches)) {
+                continue;
             }
+
+            $out[$matches[1]] = $matches[2];
         }
 
         // Done
         return $out;
-    }
-    /**
-     * Downloads the active source code
-     */
-    public function download(): BinaryFileResponse
-    {
-        \abort(501);
-
-        // Get version
-        // Get a list of files
-        $files = $this->runCachedCommand('git ls-files');
-
-        // Fail with server error if no file list
-        if (empty($files) || Str::startsWith($files, 'Command failed')) {
-            throw new ServiceUnavailableHttpException(5, 'Kan niet communiceren met Git');
-        }
-
-        // Prep a tempfile
-        $zipFile = \storage_path(sprintf("audit-%s.zip", Str::uuid()));
-        touch($zipFile);
-
-        // Prep a zipfile
-        $zip = new ZipArchive();
-
-        // Add all files in the given dirs
-        $files = collect(explode(PHP_EOL, $files));
-        foreach ($files->chunk(25) as $fileChunk) {
-            // Open the zipfile
-            if ($zip->open($zipFile) !== true) {
-                @unlink($zipFile);
-                throw new ServiceUnavailableHttpException(5, 'Kan zip-bestand niet aanmaken');
-            }
-
-            // Add each file
-            foreach ($fileChunk as $file) {
-                $path = \base_path($file);
-                if (\file_exists($path) && is_file($path)) {
-                    $zip->addFile($file, realpath($path));
-                }
-            }
-
-            // Close the zip file after the chunk
-            if ($zip->close() !== true) {
-                @unlink($zipFile);
-                throw new ServiceUnavailableHttpException(5, 'Kan zip-bestand niet sluiten');
-            }
-        }
-
-        // Check file
-        if (!\file_exists($zipFile)) {
-            throw new NotFoundHttpException('Kan zip-bestand niet meer vinden');
-        }
-
-        // Send file
-        return \response()
-            ->file($zipFile, ['Content-Type' => 'application/zip'])
-            ->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'application-code.zip');
     }
 }

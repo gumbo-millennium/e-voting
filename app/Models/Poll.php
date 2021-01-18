@@ -14,6 +14,7 @@ class Poll extends Model
 {
     /**
      * The attributes that should be cast.
+     *
      * @var array
      */
     protected $casts = [
@@ -27,14 +28,16 @@ class Poll extends Model
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array<string>
      */
     protected $fillable = [
-        'title'
+        'title',
     ];
 
     /**
      * Associated poll
+     *
      * @return HasMany<PollVote>
      */
     public function votes(): HasMany
@@ -45,6 +48,7 @@ class Poll extends Model
 
     /**
      * Approvals by the monitors
+     *
      * @return HasMany<PollVote>
      */
     public function approvals(): HasMany
@@ -55,6 +59,7 @@ class Poll extends Model
 
     /**
      * Returns true if open
+     *
      * @return bool
      */
     public function getIsOpenAttribute(): bool
@@ -91,7 +96,8 @@ class Poll extends Model
 
     /**
      * Returns alleged poll results
-     * @return null|PollResults
+     *
+     * @return PollResults|null
      */
     public function calculateResults(): ?PollResults
     {
@@ -119,7 +125,8 @@ class Poll extends Model
 
     /**
      * Returns the approval rate of this poll
-     * @return null|PollApprovalResults
+     *
+     * @return PollApprovalResults|null
      */
     public function calculateApproval(): ?PollApprovalResults
     {
@@ -147,6 +154,7 @@ class Poll extends Model
 
     /**
      * Check if the request was weird
+     *
      * @return bool
      */
     public function getIsWeirdAttribute(): bool
@@ -161,7 +169,7 @@ class Poll extends Model
 
         // Check some properties
         if (
-            $this->start_count != $this->end_count ||
+            $this->start_count !== $this->end_count ||
             $this->votes_count > $this->start_count
         ) {
             return true;

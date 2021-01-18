@@ -10,6 +10,7 @@ class CreatePollApprovalsTable extends Migration
 {
     /**
      * Run the migrations.
+     *
      * @return void
      */
     public function up()
@@ -27,6 +28,7 @@ class CreatePollApprovalsTable extends Migration
 
     /**
      * Reverse the migrations.
+     *
      * @return void
      */
     public function down()

@@ -11,6 +11,7 @@ class OptimizeCommand extends ConsoleOptimizeCommand
 {
     /**
      * Execute the console command.
+     *
      * @return int
      */
     public function handle()

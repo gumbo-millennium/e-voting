@@ -33,7 +33,7 @@ abstract class ProductionCommand extends Command
             TEXT);
             $this->error('Command aborted');
             exit(1);
-        };
+        }
 
         // Disallow when a vote is running
         if ($this->hasRunningVote()) {

@@ -22,6 +22,7 @@ class PollController extends AdminController
 {
     /**
      * List all votes
+     *
      * @param Request $request
      * @return void
      */
@@ -33,6 +34,7 @@ class PollController extends AdminController
 
     /**
      * Store the new poll
+     *
      * @param Request $request
      * @return RedirectResponse
      */
@@ -44,8 +46,8 @@ class PollController extends AdminController
                 'required',
                 'string',
                 'min:2',
-                'max:250'
-            ]
+                'max:250',
+            ],
         ]);
 
         // Make it
@@ -61,6 +63,7 @@ class PollController extends AdminController
 
     /**
      * Sends the results as a long sheet
+     *
      * @param Poll $poll
      * @return mixed
      * @throws AuthorizationException
@@ -96,6 +99,24 @@ class PollController extends AdminController
             $poll->id,
             Str::ascii($poll->title, 'nl')
         ));
+    }
+
+    /**
+     * Writes the given data
+     *
+     * @param Worksheet $sheet
+     * @param int $x
+     * @param int $y
+     * @param array $data
+     * @return void
+     */
+    public function writeTable(Worksheet &$sheet, int $x, int $y, array $data)
+    {
+        foreach ($data as $rowId => $row) {
+            foreach ($row as $cellId => $cell) {
+                $sheet->setCellValueByColumnAndRow($x + $cellId, $y + $rowId, $cell);
+            }
+        }
     }
 
     /**
@@ -144,7 +165,7 @@ class PollController extends AdminController
 
         // Add header
         $this->writeTable($sheet, 1, 7, [
-            ['Datum', 'Stem']
+            ['Datum', 'Stem'],
         ]);
 
         // Add data below
@@ -171,22 +192,5 @@ class PollController extends AdminController
         );
 
         return $path !== false;
-    }
-
-    /**
-     * Writes the given data
-     * @param Worksheet $sheet
-     * @param int $x
-     * @param int $y
-     * @param array $data
-     * @return void
-     */
-    public function writeTable(Worksheet &$sheet, int $x, int $y, array $data)
-    {
-        foreach ($data as $rowId => $row) {
-            foreach ($row as $cellId => $cell) {
-                $sheet->setCellValueByColumnAndRow($x + $cellId, $y + $rowId, $cell);
-            }
-        }
     }
 }

@@ -16,6 +16,7 @@ class PollSeeder extends Seeder
 
     /**
      * Run the database seeds.
+     *
      * @return void
      */
     public function run()
@@ -32,13 +33,14 @@ class PollSeeder extends Seeder
 
     /**
      * Creates a random poll
+     *
      * @return void
      */
     public function createPoll(): void
     {
         // make poll
         $poll = Poll::create([
-            'title' => "[Test] {$this->faker->sentence}"
+            'title' => "[Test] {$this->faker->sentence}",
         ]);
 
         // Start poll
@@ -54,7 +56,7 @@ class PollSeeder extends Seeder
         for ($i = 0; $i < $votes; $i++) {
             PollVote::create([
                 'poll_id' => $poll->id,
-                'vote' => $this->faker->randomElement($voteOptions)
+                'vote' => $this->faker->randomElement($voteOptions),
             ]);
         }
 

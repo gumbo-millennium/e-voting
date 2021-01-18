@@ -24,6 +24,7 @@ class PollVoteCard extends Component
 
     /**
      * Self user
+     *
      * @return User
      * @throws BindingResolutionException
      */
@@ -34,7 +35,8 @@ class PollVoteCard extends Component
 
     /**
      * Proxy user
-     * @return null|User
+     *
+     * @return User|null
      * @throws BindingResolutionException
      */
     public function getProxyProperty(): ?User
@@ -44,17 +46,19 @@ class PollVoteCard extends Component
 
     /**
      * Render
+     *
      * @return View|Factory
      */
     public function render()
     {
         return view('livewire.poll-vote-card', [
-            'options' => PollVote::VALID_VOTES
+            'options' => PollVote::VALID_VOTES,
         ]);
     }
 
     /**
      * Cast the self vote
+     *
      * @return void
      */
     public function castVote(string $type)
@@ -84,13 +88,13 @@ class PollVoteCard extends Component
         // Register vote action
         UserVote::create([
             'user_id' => $target->id,
-            'poll_id' => $this->poll->id
+            'poll_id' => $this->poll->id,
         ]);
 
         // Apply vote
         PollVote::create([
             'poll_id' => $this->poll->id,
-            'vote' => $this->vote
+            'vote' => $this->vote,
         ]);
 
         // Report

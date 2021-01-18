@@ -25,7 +25,7 @@ class User extends Authenticatable
         // Count
         $votePresent = User::where([
             'is_present' => true,
-            'is_voter' => true
+            'is_voter' => true,
         ])->count();
 
         $voteProxied = User::query()
@@ -43,8 +43,25 @@ class User extends Authenticatable
     }
 
     /**
+     * Ensure a totp_token is always set
+     *
+     * @return void
+     */
+    public static function booted()
+    {
+        self::saving(static function (User $user) {
+            if (!empty($user->totp_secret)) {
+                return;
+            }
+
+            $user->totp_secret = self::getTotp(null)->getSecret();
+        });
+    }
+
+    /**
      * Returns TOTP configured to 8 digits
-     * @param null|string $secret
+     *
+     * @param string|null $secret
      * @return TOTPInterface
      */
     private static function getTotp(?string $secret): TOTPInterface
@@ -53,31 +70,20 @@ class User extends Authenticatable
     }
 
     /**
-     * Ensure a totp_token is always set
-     * @return void
-     */
-    public static function booted()
-    {
-        self::saving(static function (User $user) {
-            if (empty($user->totp_secret)) {
-                $user->totp_secret = self::getTotp(null)->getSecret();
-            }
-        });
-    }
-
-    /**
      * The attributes that are mass assignable.
+     *
      * @var array
      */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'phone'
+        'phone',
     ];
 
     /**
      * The attributes that should be hidden for arrays.
+     *
      * @var array
      */
     protected $hidden = [
@@ -85,11 +91,12 @@ class User extends Authenticatable
         'remember_token',
         'phone',
         'totp_secret',
-        'proxy_id'
+        'proxy_id',
     ];
 
     /**
      * The attributes that should be cast.
+     *
      * @var array
      */
     protected $casts = [
@@ -99,7 +106,7 @@ class User extends Authenticatable
         'is_monitor' => 'bool',
         'is_present' => 'bool',
         'can_proxy' => 'bool',
-        'conscribo_id' => 'int'
+        'conscribo_id' => 'int',
     ];
 
     public function getHasTotpAttribute(): bool
@@ -109,6 +116,7 @@ class User extends Authenticatable
 
     /**
      * Returns verification instance
+     *
      * @return TOTPInterface
      * @throws RuntimeException
      */
@@ -123,6 +131,7 @@ class User extends Authenticatable
 
     /**
      * The user that this user's vote is transferred to
+     *
      * @return BelongsTo
      */
     public function proxy(): BelongsTo
@@ -132,6 +141,7 @@ class User extends Authenticatable
 
     /**
      * The user that gave an extra vote to this user
+     *
      * @return HasOne
      */
     public function proxyFor(): HasOne
@@ -141,6 +151,7 @@ class User extends Authenticatable
 
     /**
      * Returns all votes the user has cast
+     *
      * @return HasMany
      */
     public function votes(): HasMany
@@ -150,6 +161,7 @@ class User extends Authenticatable
 
     /**
      * Returns all approvals the user has cast
+     *
      * @return HasMany
      */
     public function pollApprovals(): HasMany
@@ -159,6 +171,7 @@ class User extends Authenticatable
 
     /**
      * Returns the role the user has
+     *
      * @return string
      */
     public function getVoteLabelAttribute()

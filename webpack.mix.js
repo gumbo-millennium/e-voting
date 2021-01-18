@@ -20,7 +20,7 @@ const CompressionPlugin = require('compression-webpack-plugin')
 mix.js('resources/js/app.js', 'public/js')
 
 // Stylesheets
-mix.postCss('resources/css/app.css', 'public/css')
+mix.css('resources/css/app.css', 'public/css')
 
 // Version in prod
 if (mix.inProduction()) {
@@ -64,3 +64,6 @@ plugins.push(
 
 // Apply plugins
 mix.webpackConfig({ plugins })
+
+// Disable annoying OK notifications
+mix.disableSuccessNotifications()

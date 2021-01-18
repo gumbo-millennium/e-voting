@@ -14,18 +14,21 @@ trait SetsUserRights
 {
     /**
      * Groups that might show up for the meeting
+     *
      * @var array
      */
     private static array $accountGroups = ['lid', 'erelid', 'a-leden', 'oud-lid', 'begunstiger'];
 
     /**
      * Groups that are allowed to vote
+     *
      * @var array
      */
     private static array $voteGroups = ['lid', 'erelid'];
 
     /**
      * Groups that are allowed to vote
+     *
      * @var array
      */
     private static array $proxyGroups = ['lid', 'erelid', 'begunstiger'];
@@ -33,12 +36,14 @@ trait SetsUserRights
     /**
      * Groups that are normally not allowed to vote, but are allowed
      * if the user is in the admin group
+     *
      * @var array
      */
     private static array $boardVoteGroups = ['oud-lid'];
 
     /**
      * Codes of the group of which the members are admin
+     *
      * @var string
      */
     private static string $adminGroup = '1337';
@@ -46,79 +51,8 @@ trait SetsUserRights
     private array $userRightsCache = [];
 
     /**
-     * Converts iterable results to name => member IDs
-     * @param iterable $results
-     * @return Collection
-     */
-    private function mapToMembers(iterable $results): Collection
-    {
-        return collect($results)
-            ->mapWithKeys(static fn ($group) => [Str::slug($group['name'] ?? $group['naam']) => $group['members']]);
-    }
-
-    /**
-     * Maps all groups to a list of IDs, to allow quick role assignment
-     * @param ConscriboService $service
-     * @return Collection<array<int>>
-     */
-    private function getGroupMembers(ConscriboService $service): Collection
-    {
-        // Get groups
-        $this->userRightsCache['groups'] ??= $this->mapToMembers(
-            $service->getResourceGroups('persoon')
-        );
-
-        // Return
-        return $this->userRightsCache['groups'];
-    }
-
-    /**
-     * Returns groups that are admins
-     * @param ConscriboService $service
-     * @return Collection
-     */
-    private function getAdminMembers(ConscriboService $service): Collection
-    {
-        // Get commissie
-        $this->userRightsCache['admin'] ??= $this->mapToMembers(
-            $service->getResource('commissie', ['code' => self::$adminGroup])
-        )->collapse();
-
-        // Return
-        return $this->userRightsCache['admin'];
-    }
-
-    /**
-     * Returns if the ID is in the collection somewhere
-     * @param int $id
-     * @param Collection $collection
-     * @param array $keys
-     * @return bool
-     */
-    private function existsInCollection(int $id, Collection $collection, array $keys): bool
-    {
-        return $collection->only($keys)->collapse()->contains($id);
-    }
-
-    /**
-     * Returns if the given ID should be created
-     * @param ConscriboService $service
-     * @param int $id
-     * @return bool
-     */
-    protected function shouldProcessUser(ConscriboService $service, int $id): bool
-    {
-        // Get groups
-        $groups = $this->getGroupMembers($service);
-        $admins = $this->getAdminMembers($service);
-
-        // Check if in account group or an admin
-        return $this->existsInCollection($id, $groups, self::$accountGroups)
-            || $admins->contains($id);
-    }
-
-    /**
      * Updates the given user to match the data known in the service
+     *
      * @param ConscriboService $service
      * @param User $user
      * @return void
@@ -174,5 +108,82 @@ trait SetsUserRights
             null,
             OutputInterface::VERBOSITY_VERBOSE
         );
+    }
+
+    /**
+     * Returns if the given ID should be created
+     *
+     * @param ConscriboService $service
+     * @param int $id
+     * @return bool
+     */
+    protected function shouldProcessUser(ConscriboService $service, int $id): bool
+    {
+        // Get groups
+        $groups = $this->getGroupMembers($service);
+        $admins = $this->getAdminMembers($service);
+
+        // Check if in account group or an admin
+        return $this->existsInCollection($id, $groups, self::$accountGroups)
+            || $admins->contains($id);
+    }
+
+    /**
+     * Converts iterable results to name => member IDs
+     *
+     * @param iterable $results
+     * @return Collection
+     */
+    private function mapToMembers(iterable $results): Collection
+    {
+        return collect($results)
+            ->mapWithKeys(static fn ($group) => [Str::slug($group['name'] ?? $group['naam']) => $group['members']]);
+    }
+
+    /**
+     * Maps all groups to a list of IDs, to allow quick role assignment
+     *
+     * @param ConscriboService $service
+     * @return Collection<array<int>>
+     */
+    private function getGroupMembers(ConscriboService $service): Collection
+    {
+        // Get groups
+        $this->userRightsCache['groups'] ??= $this->mapToMembers(
+            $service->getResourceGroups('persoon')
+        );
+
+        // Return
+        return $this->userRightsCache['groups'];
+    }
+
+    /**
+     * Returns groups that are admins
+     *
+     * @param ConscriboService $service
+     * @return Collection
+     */
+    private function getAdminMembers(ConscriboService $service): Collection
+    {
+        // Get commissie
+        $this->userRightsCache['admin'] ??= $this->mapToMembers(
+            $service->getResource('commissie', ['code' => self::$adminGroup])
+        )->collapse();
+
+        // Return
+        return $this->userRightsCache['admin'];
+    }
+
+    /**
+     * Returns if the ID is in the collection somewhere
+     *
+     * @param int $id
+     * @param Collection $collection
+     * @param array $keys
+     * @return bool
+     */
+    private function existsInCollection(int $id, Collection $collection, array $keys): bool
+    {
+        return $collection->only($keys)->collapse()->contains($id);
     }
 }

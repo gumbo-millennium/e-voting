@@ -18,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
+     *
      * @return void
      */
     public function register()
@@ -49,6 +50,7 @@ class AppServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap any application services.
+     *
      * @return void
      */
     public function boot()
@@ -61,11 +63,17 @@ class AppServiceProvider extends ServiceProvider
             $version = $this->app->make(AuditController::class)->getAppVersion();
             if ($expr === 'link' && $version === 'onbekend') {
                 return "https://github.com/gumbo-millennium/e-voting";
-            } elseif ($version === 'onbekend') {
+            }
+
+            if ($version === 'onbekend') {
                 return $version;
-            } elseif ($expr === 'link') {
+            }
+
+            if ($expr === 'link') {
                 return "https://github.com/gumbo-millennium/e-voting/tree/{$version}";
-            } elseif ($expr === 'short' || $expr === 'true') {
+            }
+
+            if ($expr === 'short' || $expr === 'true') {
                 return substr($version, 0, 7);
             }
 

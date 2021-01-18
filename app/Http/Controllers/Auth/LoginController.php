@@ -25,6 +25,7 @@ class LoginController extends Controller
 
     /**
      * Ensure safety of data
+     *
      * @return void
      */
     public function __construct()
@@ -35,6 +36,7 @@ class LoginController extends Controller
 
     /**
      * E-mail view
+     *
      * @return Response
      */
     public function index(): Response
@@ -45,6 +47,7 @@ class LoginController extends Controller
 
     /**
      * Find the e-mail address
+     *
      * @param Request $request
      * @return RedirectResponse|Response
      * @throws BindingResolutionException
@@ -53,7 +56,7 @@ class LoginController extends Controller
     {
         // Validate
         $request->validate([
-            'email' => ['required', 'email']
+            'email' => ['required', 'email'],
         ]);
 
         // Find a user
@@ -80,7 +83,7 @@ class LoginController extends Controller
         // Assign user to session
         $request->session()->put([
             'login-user' => $user,
-            'login-expire' => Date::now()->addHour()
+            'login-expire' => Date::now()->addHour(),
         ]);
 
         // Send the text
@@ -93,6 +96,7 @@ class LoginController extends Controller
 
     /**
      * Ask for a token
+     *
      * @param Request $request
      * @return RedirectResponse|Response
      */
@@ -107,7 +111,7 @@ class LoginController extends Controller
 
         // Return the view
         return \response()->view('login.token', [
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
@@ -124,8 +128,8 @@ class LoginController extends Controller
             'token' => [
                 'required',
                 'string',
-                'regex:/^\d{8}$/'
-            ]
+                'regex:/^\d{8}$/',
+            ],
         ]);
 
         // Get the token
@@ -154,6 +158,7 @@ class LoginController extends Controller
 
     /**
      * Sends a new token to the user
+     *
      * @param Request $request
      * @param VerificationService $service
      * @return RedirectResponse
@@ -180,8 +185,9 @@ class LoginController extends Controller
 
     /**
      * Check request
+     *
      * @param Request $request
-     * @return null|User
+     * @return User|null
      */
     public function getUserForToken(Request $request): ?User
     {
@@ -203,6 +209,7 @@ class LoginController extends Controller
 
     /**
      * Re-sends the code if allowed
+     *
      * @param VerificationService $service
      * @param User $user
      * @return void

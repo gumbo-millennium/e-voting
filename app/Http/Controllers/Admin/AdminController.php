@@ -10,6 +10,7 @@ class AdminController extends Controller
 {
     /**
      * Ensure safety
+     *
      * @return void
      */
     public function __construct()

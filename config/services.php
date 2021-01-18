@@ -25,6 +25,6 @@ return [
         'account' => env('CONSCRIBO_ACCOUNT'),
         'username' => env('CONSCRIBO_USERNAME'),
         'password' => env('CONSCRIBO_PASSWORD'),
-    ]
+    ],
 
 ];

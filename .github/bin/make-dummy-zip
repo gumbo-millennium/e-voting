@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+GITHUB_DIR="$( realpath "$SCRIPT_DIR/.." )"
+PUBLIC_DIR="$( realpath "$GITHUB_DIR/../public" )"
+
+cd "$PUBLIC_DIR"
+
+zip -0r \
+	"$GITHUB_DIR/public.zip" \
+	"mix-manifest.json" \
+	"css/*.css" \
+	"js/*.js" \
+	"images/*.svg"
+

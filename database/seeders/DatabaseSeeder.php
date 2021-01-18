@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
+     *
      * @return void
      */
     public function run()
@@ -23,8 +24,10 @@ class DatabaseSeeder extends Seeder
         }
 
         // If local, create test polls
-        if (App::environment('local')) {
-            $this->call(PollSeeder::class);
+        if (!App::environment('local')) {
+            return;
         }
+
+        $this->call(PollSeeder::class);
     }
 }

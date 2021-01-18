@@ -1,0 +1,9 @@
+# Don't version control binaries
+.terraform/
+
+# Prevent accidental secret leaking
+*.tfvars
+*.tfstate
+
+# Allow config examples
+!terraform.example.tfvars

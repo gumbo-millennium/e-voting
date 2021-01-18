@@ -12,7 +12,8 @@ class Notice extends Component
 
     /**
      * Require a color
-     * @param null|string $color
+     *
+     * @param string|null $color
      * @return void
      */
     public function __construct($color = 'blue')
@@ -22,6 +23,7 @@ class Notice extends Component
 
     /**
      * Get the view / contents that represent the component.
+     *
      * @return \Illuminate\Contracts\View\View|string
      */
     public function render()

@@ -15,11 +15,12 @@ class ArchivedResultsCast implements CastsAttributes
 {
     /**
      * Cast the given value.
+     *
      * @param Model $model
      * @param string $key
      * @param mixed $value
      * @param array $attributes
-     * @return null|ArchivedResults
+     * @return ArchivedResults|null
      */
     // phpcs:ignore SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
     public function get($model, string $key, $value, array $attributes): ?ArchivedResults
@@ -60,9 +61,25 @@ class ArchivedResultsCast implements CastsAttributes
     }
 
     /**
+     * Prepare the given value for storage.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $key
+     * @param  mixed  $value
+     * @param  array  $attributes
+     * @return mixed
+     */
+    // phpcs:ignore SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+    public function set($model, $key, $value, $attributes)
+    {
+        return json_encode($value);
+    }
+
+    /**
      * Converts poll results to a model
+     *
      * @param iterable $data
-     * @return null|PollResults
+     * @return PollResults|null
      */
     private function getResults(iterable $data): ?PollResults
     {
@@ -80,6 +97,7 @@ class ArchivedResultsCast implements CastsAttributes
 
     /**
      * Converts approval results to a model
+     *
      * @param iterable $data
      * @return PollApprovalResults
      */
@@ -95,19 +113,5 @@ class ArchivedResultsCast implements CastsAttributes
             Arr::get($data, 'neutral'),
             Arr::get($data, 'approvals'),
         );
-    }
-
-    /**
-     * Prepare the given value for storage.
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  array  $attributes
-     * @return mixed
-     */
-    // phpcs:ignore SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
-    public function set($model, $key, $value, $attributes)
-    {
-        return json_encode($value);
     }
 }

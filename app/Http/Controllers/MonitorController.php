@@ -13,6 +13,7 @@ class MonitorController extends Controller
 {
     /**
      * Ensure auth
+     *
      * @return void
      */
     public function __construct()
@@ -22,6 +23,7 @@ class MonitorController extends Controller
 
     /**
      * Display all votes
+     *
      * @param Request $request
      * @return Response
      */
@@ -32,7 +34,7 @@ class MonitorController extends Controller
             ->with('votes')
             ->whereBetween('ended_at', [
                 Date::now()->subMonths(3),
-                Date::now()
+                Date::now(),
             ])
             ->whereNotNull('ended_at')
             ->orderByDesc('ended_at');

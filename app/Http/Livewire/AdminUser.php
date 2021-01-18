@@ -30,6 +30,7 @@ class AdminUser extends Component
 
     /**
      * Marks a user as present
+     *
      * @param App\Http\Livewire\Request $request
      * @param bool $present
      * @return void
@@ -44,6 +45,7 @@ class AdminUser extends Component
 
     /**
      * Marks a user as present
+     *
      * @param App\Http\Livewire\Request $request
      * @param bool $monitor
      * @return void
