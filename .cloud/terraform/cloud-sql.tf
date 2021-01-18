@@ -7,8 +7,7 @@ resource "google_sql_database_instance" "db_mysql" {
   settings {
     tier = var.cloud_sql_machine
 
-    disk_autoresize     = false
-    deletion_protection = false
+    disk_autoresize = false
 
     maintenance_window {
       day  = 7
