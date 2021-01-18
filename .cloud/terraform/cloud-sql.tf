@@ -1,7 +1,8 @@
 # Create a MySQL sever
 resource "google_sql_database_instance" "db_mysql" {
-  name             = "${var.app_prefix}-mysql"
-  database_version = "MYSQL_8_0"
+  name                = "${var.app_prefix}-mysql"
+  database_version    = "MYSQL_8_0"
+  deletion_protection = false
 
   settings {
     tier = var.cloud_sql_machine
