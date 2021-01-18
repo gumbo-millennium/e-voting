@@ -32,6 +32,16 @@ resource "google_cloud_run_service" "default" {
           value = "stackdriver"
         }
 
+        # Mail
+        env {
+          name  = "MAIL_HOST"
+          value = "smtp-relay.gmail.com"
+        }
+        env {
+          name  = "MAIL_PORT"
+          value = "587"
+        }
+
         # Dynamic
         env {
           name  = "GOOGLE_CLOUD_PROJECT_ID"
