@@ -106,17 +106,3 @@ resource "google_cloud_run_service_iam_policy" "noauth" {
 
   policy_data = data.google_iam_policy.noauth.policy_data
 }
-
-# Also add our domain mapping
-resource "google_cloud_run_domain_mapping" "default" {
-  location = var.region
-  name     = "e-voting.gumbo-millennium.nl"
-
-  metadata {
-    namespace = var.project
-  }
-
-  spec {
-    route_name = google_cloud_run_service.default.name
-  }
-}
