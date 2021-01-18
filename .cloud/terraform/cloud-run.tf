@@ -7,43 +7,10 @@ resource "google_cloud_run_service" "default" {
     spec {
       containers {
         image = data.google_container_registry_image.application.image_url
+        # Cloud SQL
         env {
-          name  = "APP_STORAGE"
-          value = "/tmp"
-        }
-        env {
-          name  = "VIEW_COMPILED_PATH"
-          value = "/tmp"
-        }
-        env {
-          name  = "CACHE_DRIVER"
-          value = "database"
-        }
-        env {
-          name  = "SESSION_DRIVER"
-          value = "database"
-        }
-        env {
-          name  = "QUEUE_CONNECTION"
-          value = "database"
-        }
-        env {
-          name  = "LOG_CHANNEL"
-          value = "stackdriver"
-        }
-        env {
-          name  = "GOOGLE_CLOUD"
-          value = "run"
-        }
-
-        # Mail
-        env {
-          name  = "MAIL_HOST"
-          value = "smtp-relay.gmail.com"
-        }
-        env {
-          name  = "MAIL_PORT"
-          value = "587"
+          name  = "CLOUD_SQL_CONNECTION_NAME"
+          value = data.google_sql_database_instance.db_mysql.connection_name
         }
 
         # Dynamic

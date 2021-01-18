@@ -118,8 +118,43 @@ ENTRYPOINT ["/bin/entrypoint.sh"]
 
 FROM main AS google-cloud-run
 
+# Configure Google flag
 ENV GOOGLE_CLOUD=run
 
+# Configure app
+RUN APP_NAME=e-voting \
+    APP_ENV=prod \
+    APP_DEBUG=false \
+    APP_BETA=false \
+    APP_URL=http://localhost
+
+# Logging config
+ENV LOG_CHANNEL=stackdriver \
+    LOG_LEVEL=info
+
+# MySQL config
+ENV DB_CONNECTION=mysql
+
+# Driver config
+ENV BROADCAST_DRIVER=log \
+    CACHE_DRIVER=database \
+    QUEUE_CONNECTION=database \
+    SESSION_DRIVER=database \
+    SESSION_LIFETIME=300
+
+# Mail config
+ENV MAIL_MAILER=smtp \
+    MAIL_HOST=smtp-relay.gmail.com \
+    MAIL_PORT=587
+
+# Google Cloud Run
+ENV APP_STORAGE=/tmp \
+    VIEW_COMPILED_PATH=/tmp
+
+# Remove the environment file
+RUN rm .env
+
+# Install opcache
 RUN docker-php-ext-install -j "$( nproc )" opcache
 
 RUN set -ex; \

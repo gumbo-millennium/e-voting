@@ -8,28 +8,20 @@ is_set () {
     fi
 }
 
-echo " ============== DRIVERS ============== "
-echo "Cache driver: ${CACHE_DRIVER:-(UNSET)}"
-echo "Queue driver: ${QUEUE_CONNECTION:-(UNSET)}"
-echo "Session driver: ${SESSION_DRIVER:-(UNSET)}"
-echo "Log channel: ${LOG_CHANNEL:-(UNSET)}"
+echo " ============== Services ============== "
+is_set "Google Cloud Project ID" $GOOGLE_CLOUD_PROJECT_ID
+is_set "Google Cloud SQL connection" $CLOUD_SQL_CONNECTION_NAME
+is_set "Google Cloud Storage bucket" $GOOGLE_CLOUD_STORAGE_BUCKET
 
 echo " ============== SECRETS ============== "
+is_set "Application key" $APP_KEY
+
 is_set "Messagebird Key" $MESSAGEBIRD_ACCESS_KEY
 is_set "Messagebird Origin" $MESSAGEBIRD_ORIGINATOR
 
 is_set "Conscribo Site" $CONSCRIBO_ACCOUNT
 is_set "Conscribo User" $CONSCRIBO_USERNAME
 is_set "Conscribo Pass" $CONSCRIBO_PASSWORD
-
-echo " ============== SELF-CHECK ============== "
-if [ -z "$APP_KEY" ]; then
-    echo "Application key NOT SET\!"
-    echo "Creating one for now..."
-    php /var/www/laravel/artisan key:generate
-else
-    echo "Application key SET"
-fi
 
 if [ "$GOOGLE_CLOUD" = "run" ]; then
     echo " ============== GOOGLE CONFIG ============== "
@@ -40,25 +32,8 @@ if [ "$GOOGLE_CLOUD" = "run" ]; then
     sed -i -r "s/listen [0-9]+;/listen ${PORT};/g" \
         /etc/nginx/sites-available/*
 
-    echo "Configuring SQL socket"
-    export DB_HOST=""
-    export DB_PORT=""
+    echo "Configuring Cloud SQL socket"
     export DB_SOCKET="${DB_SOCKET_DIR:-/cloudsql}/${CLOUD_SQL_CONNECTION_NAME}"
-    echo "SQL Socket configured as [$DB_SOCKET]"
-
-    echo "Disabling host configs"
-    sed -i \
-        -e 's/^DB_HOST=/#DB_HOST=/' \
-        -e 's/^DB_PORT=/#DB_PORT=/' \
-        -e 's/^DB_SOCKET=/#DB_SOCKET=/' \
-        /var/www/laravel/.env
-
-    echo "Adding new configs to .env"
-    {
-        echo ""
-        echo "# Google Cloud Run config"
-        echo "DB_SOCKET=\"${DB_SOCKET}\""
-    } >> /var/www/laravel/.env
 fi
 
 
