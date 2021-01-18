@@ -41,7 +41,10 @@ if [ "$GOOGLE_CLOUD" = "run" ]; then
         /etc/nginx/sites-available/*
 
     echo "Configuring SQL socket"
+    export DB_HOST=""
+    export DB_PORT=""
     export DB_SOCKET="${DB_SOCKET_DIR:-/cloudsql}/${CLOUD_SQL_CONNECTION_NAME}"
+    export DATABASE_URL="mysql:dbname=${DB_DATABASE};unix_socket=${DB_SOCKET}"
 fi
 
 
