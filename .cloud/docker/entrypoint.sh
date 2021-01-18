@@ -44,21 +44,20 @@ if [ "$GOOGLE_CLOUD" = "run" ]; then
     export DB_HOST=""
     export DB_PORT=""
     export DB_SOCKET="${DB_SOCKET_DIR:-/cloudsql}/${CLOUD_SQL_CONNECTION_NAME}"
-    export DATABASE_URL="mysql:dbname=${DB_DATABASE};unix_socket=${DB_SOCKET}"
+    echo "SQL Socket configured as [$DB_SOCKET]"
 
     echo "Disabling host configs"
     sed -i \
         -e 's/^DB_HOST=/#DB_HOST=/' \
         -e 's/^DB_PORT=/#DB_PORT=/' \
         -e 's/^DB_SOCKET=/#DB_SOCKET=/' \
-        -e 's/^DATABASE_URL=/#DATABASE_URL=/' \
         /var/www/laravel/.env
 
     echo "Adding new configs to .env"
     {
+        echo ""
         echo "# Google Cloud Run config"
         echo "DB_SOCKET=\"${DB_SOCKET}\""
-        echo "DATABASE_URL=\"${DATABASE_URL}\""
     } >> /var/www/laravel/.env
 fi
 
