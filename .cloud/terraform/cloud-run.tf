@@ -24,6 +24,10 @@ resource "google_cloud_run_service" "default" {
           value = "database"
         }
         env {
+          name  = "QUEUE_CONNECTION"
+          value = "database"
+        }
+        env {
           name  = "LOG_CHANNEL"
           value = "stackdriver"
         }
