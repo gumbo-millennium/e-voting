@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuditController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\HealthController;
 use App\Http\Controllers\MonitorController;
 use App\Http\Controllers\VoteController;
 use Illuminate\Support\Facades\Route;
@@ -71,8 +72,12 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(static functi
     });
 });
 
+
 // Monitor routes
 Route::middleware('monitor')->prefix('monitor')->name('monitor.')->group(static function () {
     // Home route
     Route::get('/', [MonitorController::class, 'index'])->name('index');
 });
+
+// Health routes
+Route::get('/health', [HealthController::class, 'index']);

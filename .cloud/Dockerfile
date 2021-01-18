@@ -1,12 +1,10 @@
-FROM php:8.0-fpm
-
-# Set working directory
-WORKDIR /var/www/html
+FROM php:8.0-fpm AS main
 
 # Install container dependencies
 RUN apt-get update \
     && apt-get install -y \
         git \
+        moreutils \
         nginx \
         sudo \
         supervisor \
@@ -55,12 +53,13 @@ RUN docker-php-ext-configure gd \
         --with-jpeg \
         --with-webp \
         --with-xpm \
-    && docker-php-ext-install \
+    && docker-php-ext-install -j "$( nproc )" \
         bcmath \
         ctype \
         curl \
         dom \
         gd \
+        intl \
         mbstring \
         mysqli \
         pcntl \
@@ -79,22 +78,33 @@ RUN pecl install redis \
 # Use production PHP
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# Enable nginx
+# Copy PHP-FPM config and self test
+COPY ./.cloud/docker/fpm/docker-pool.conf $PHP_INI_DIR/../php-fpm.d/zz-docker.conf
+RUN php-fpm --test
+
+# Enable nginx and self test
 RUN sed -i "s/worker_processes /daemon off;\nworker_processes /" /etc/nginx/nginx.conf
-COPY ./.cloud/docker/nginx/default.conf /etc/nginx/sites-available/default.conf
+COPY ./.cloud/docker/nginx/default.conf /etc/nginx/sites-available/default
+RUN nginx -t
 
 #  Install Supervisor configs
 COPY ./.cloud/docker/supervisor/*.conf /etc/supervisor/conf.d/
 COPY ./.cloud/docker/entrypoint.sh /bin/entrypoint.sh
 
-# Add source code files to WORKDIR
+# Set working directory and assign proper permissions
+WORKDIR /var/www/laravel
+RUN chown www-data:www-data /var/www/laravel
+
+# Add files and directories to image
 COPY --chown=www-data:www-data . .
+
+# Copy a default environment file
 RUN cp .env.example .env
 
 # Install composer dependencies
 RUN sudo -u www-data -- composer install \
+    --ignore-platform-req=php \
     --classmap-authoritative \
-    --ignore-platform-reqs \
     --no-dev \
     --no-interaction \
     --no-plugins \
@@ -105,3 +115,24 @@ EXPOSE 80
 
 # Container start command
 ENTRYPOINT ["/bin/entrypoint.sh"]
+
+FROM main AS google-cloud-run
+
+ENV GOOGLE_CLOUD=run
+
+RUN docker-php-ext-install -j "$( nproc )" opcache
+
+RUN set -ex; \
+  { \
+    echo "; Cloud Run enforces memory & timeouts"; \
+    echo "memory_limit = -1"; \
+    echo "max_execution_time = 0"; \
+    echo "; File upload at Cloud Run network limit"; \
+    echo "upload_max_filesize = 32M"; \
+    echo "post_max_size = 32M"; \
+    echo "; Configure Opcache for Containers"; \
+    echo "opcache.enable = On"; \
+    echo "opcache.validate_timestamps = Off"; \
+    echo "; Configure Opcache Memory (Application-specific)"; \
+    echo "opcache.memory_consumption = 32"; \
+  } > "$PHP_INI_DIR/conf.d/cloud-run.ini"
