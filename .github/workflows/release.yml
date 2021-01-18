@@ -134,12 +134,6 @@ jobs:
     needs:
       - build-gcr-image
 
-    env:
-      # Secret based
-      TF_VAR_cloud_sql_database: ${{ secrets.SQL_DATABASE }}
-      TF_VAR_cloud_sql_username: ${{ secrets.SQL_USERNAME }}
-      TF_VAR_cloud_sql_password: ${{ secrets.SQL_PASSWORD }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
