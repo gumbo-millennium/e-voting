@@ -1,5 +1,5 @@
 resource "google_storage_bucket" "site_object_cache" {
-  name          = "${var.app_prefix}-app-storage"
+  name          = "${local.server_prefix}-app-storage"
   location      = var.region
   force_destroy = true
 

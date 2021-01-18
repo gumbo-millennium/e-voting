@@ -39,6 +39,9 @@ if [ "$GOOGLE_CLOUD" = "run" ]; then
     echo "Replacing port with requested port ${PORT}"
     sed -i -r "s/listen [0-9]+;/listen ${PORT};/g" \
         /etc/nginx/sites-available/*
+
+    echo "Configuring SQL socket"
+    export DB_SOCKET="${DB_SOCKET_DIR:-/cloudsql}/${CLOUD_SQL_CONNECTION_NAME}"
 fi
 
 

@@ -1,6 +1,6 @@
 # Now create our Google Cloud Run service
 resource "google_cloud_run_service" "default" {
-  name     = "${var.app_prefix}-laravel-app"
+  name     = "${local.server_prefix}-laravel-app"
   location = var.region
 
   template {
@@ -31,6 +31,20 @@ resource "google_cloud_run_service" "default" {
           name  = "LOG_CHANNEL"
           value = "stackdriver"
         }
+        env {
+          name  = "GOOGLE_CLOUD"
+          value = "run"
+        }
+
+        # Mail
+        env {
+          name  = "MAIL_HOST"
+          value = "smtp-relay.gmail.com"
+        }
+        env {
+          name  = "MAIL_PORT"
+          value = "587"
+        }
 
         # Dynamic
         env {
@@ -42,18 +56,48 @@ resource "google_cloud_run_service" "default" {
           value = google_storage_bucket.site_object_cache.name
         }
 
-        # Secret
+        # App key
+        env {
+          name  = "APP_KEY"
+          value = local.app_token
+        }
+
+        # Database secrets
         env {
           name  = "DB_DATABASE"
-          value = var.cloud_sql_database
+          value = local.cloud_sql_database
         }
         env {
           name  = "DB_USERNAME"
-          value = var.cloud_sql_username
+          value = local.cloud_sql_username
         }
         env {
           name  = "DB_PASSWORD"
-          value = var.cloud_sql_password
+          value = local.cloud_sql_password
+        }
+
+        # Messagebird secrets
+        env {
+          name  = "MESSAGEBIRD_ACCESS_KEY"
+          value = local.messagebird_access_key
+        }
+        env {
+          name  = "MESSAGEBIRD_ORIGINATOR"
+          value = local.messagebird_origin
+        }
+
+        # Concribo secrets
+        env {
+          name  = "CONSCRIBO_ACCOUNT"
+          value = local.conscribo_account
+        }
+        env {
+          name  = "CONSCRIBO_USERNAME"
+          value = local.conscribo_username
+        }
+        env {
+          name  = "CONSCRIBO_PASSWORD"
+          value = local.conscribo_password
         }
       }
     }

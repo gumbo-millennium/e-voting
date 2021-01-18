@@ -47,40 +47,6 @@ variable "container_region" {
   default = "eu"
 }
 
-variable "cloud_sql_database" {
-  type    = string
-  default = "laravel"
-
-  validation {
-    condition     = can(regex("^[a-z]", var.cloud_sql_database))
-    error_message = "App prefix must start with a letter."
-  }
-  validation {
-    condition     = can(regex("^[a-z0-9-]+$", var.cloud_sql_database))
-    error_message = "App prefix must only use lowercase letters, numbers and hyphens."
-  }
-}
-
-variable "cloud_sql_username" {
-  type      = string
-  default   = "laravel"
-  sensitive = true
-
-  validation {
-    condition     = can(regex("^[a-z]", var.cloud_sql_username))
-    error_message = "App prefix must start with a letter."
-  }
-  validation {
-    condition     = can(regex("^[a-z0-9-]+$", var.cloud_sql_username))
-    error_message = "App prefix must only use lowercase letters, numbers and hyphens."
-  }
-}
-
-variable "cloud_sql_password" {
-  type      = string
-  sensitive = true
-}
-
 variable "cloud_sql_machine" {
   type    = string
   default = "db-n1-standard-1"
