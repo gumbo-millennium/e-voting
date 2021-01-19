@@ -123,6 +123,7 @@ ENV GOOGLE_CLOUD=run
 
 # Configure app
 RUN APP_NAME=e-voting \
+    APP_URL=https://e-voting.gumbo-millennium.nl/ \
     APP_ENV=prod \
     APP_DEBUG=false \
     APP_BETA=false \
