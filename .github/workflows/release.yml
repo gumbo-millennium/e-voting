@@ -22,12 +22,22 @@ env:
   TF_VAR_container_region: eu
   TF_VAR_app_prefix: vote2021-release
 
+  # Dummy app key
+  APP_KEY: base64:8fzvICpJu/KQi7u4kP59hU6stPTYDSx+ftkyR2z5do0=
+
 jobs:
   build-frontend:
     name: "Build application front-end"
     runs-on: "ubuntu-latest"
 
     steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: '8.0'
+          extensions: exif, json, mbstring, bcmath, dom, fileinfo, mysql
+          coverage: none
+
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -36,6 +46,16 @@ jobs:
 
       - name: Build Front-end
         run: npm run-script build
+
+      - name: Copy environment config
+        run: cp .github/actions.env .env
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v1
+          composer-options: "--ignore-platform-req=php"
+
+      - name: Create Docker error files
+        run: php artisan docker:prepare-pages
 
       - name: Publish front-end
         uses: actions/upload-artifact@v2
