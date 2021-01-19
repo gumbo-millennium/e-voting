@@ -19,3 +19,4 @@ yarn-error.log
 
 # IDE helper
 _ide_helper_models.php
+/public/*.html
