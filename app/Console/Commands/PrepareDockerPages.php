@@ -9,8 +9,10 @@ use Illuminate\Support\Facades\View;
 
 class PrepareDockerPages extends Command
 {
-    private const VIEW_MAP = [
-        'docker.503' => '503-nginx.html',
+    private const ERROR_MAP = [
+        [502, 'Bad Gateway'],
+        [503, 'Service Unavailable'],
+        [504, 'Gateway Timeout'],
     ];
 
     /**
@@ -34,14 +36,22 @@ class PrepareDockerPages extends Command
      */
     public function handle()
     {
-        foreach (self::VIEW_MAP as $template => $htmlFile) {
+        foreach (self::ERROR_MAP as [$htmlCode, $htmlText]) {
+            $htmlFile = "error-{$htmlCode}.html";
             $this->line("Creating <info>{$htmlFile}</>...");
 
-            $templateContents = View::make($template)->render();
+            $templateContents = View::make('docker.error', [
+                'code' => $htmlCode,
+                'title' => "{$htmlText} - HTTP {$htmlCode} - Gumbo e-voting",
+                'message' => $htmlText,
+            ])->render();
 
-            file_put_contents(public_path($htmlFile), $templateContents);
+            if (file_put_contents(public_path($htmlFile), $templateContents)) {
+                $this->info('OK');
+                continue;
+            }
 
-            $this->info('OK');
+            $this->error('Failed to write file 😢');
         }
 
         return 0;

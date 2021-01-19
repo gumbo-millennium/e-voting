@@ -2,14 +2,14 @@
 
 @section('html-body')
 <main class="container container--md">
-    <a href="{{ url('/') }}" class="flex flex-row items-center">
-        <img src="{{ mix('images/logo.svg') }}" class="h-32 flex-none mx-auto mt-16 mb-4">
+    <a href="{{ url('/') }}" class="flex flex-row items-center mt-32 mb-4">
+        <img src="{{ mix('images/logo.svg') }}" class="h-32 flex-none mx-auto">
     </a>
 
-    <div class="h-64"></div>
+    <div class="h-16"></div>
 
     <h1 class="font-title font-normal text-3xl mb-4">
-        502 <span class="font-bold">Bad Gateway</span>
+        {{ $code }} <span class="font-bold">{{ $message }}</span>
     </h1>
 
     <p class="text-xl mb-4 leading-relaxed">
