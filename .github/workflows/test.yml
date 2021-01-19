@@ -122,6 +122,14 @@ jobs:
         with:
           composer-options: "--ignore-platform-req=php"
 
+      - name: Install GitHub Actions test printer
+        run:
+          composer require
+            --dev
+            --no-progress
+            --no-interaction
+            mheap/phpunit-github-actions-printer
+
       - name: Configure application
         run: php artisan key:generate
 
@@ -150,7 +158,9 @@ jobs:
       - name: Run unit tests
         run: |
           test -d dist || mkdir dist
-          vendor/bin/phpunit --coverage-clover ./dist/coverage-clover.xml
+          vendor/bin/phpunit \
+            --coverage-clover ./dist/coverage-clover.xml \
+            --printer mheap\\GithubActionsReporter\\Printer
 
   terraform:
     name: "Validate Terraform Configuration"
