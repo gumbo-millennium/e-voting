@@ -43,6 +43,7 @@ jobs:
           name: frontend
           path: |
             public/css
+            public/images
             public/js
             public/mix-manifest.json
 
