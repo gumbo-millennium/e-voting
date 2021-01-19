@@ -12,7 +12,8 @@ jobs:
     name: "Build front-end"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Cache node_modules
         id: cache-node
@@ -27,7 +28,7 @@ jobs:
       - name: Copy environment config
         run: cp .github/actions.env .env
 
-      - name: Install Yarn dependencies
+      - name: Install NPM dependencies
         if: steps.cache-node.outputs.cache-hit != 'true'
         run: npm clean-install
 
@@ -98,11 +99,6 @@ jobs:
           restore-keys: |
             composer-build-${{ env.cache-name }}-
             composer-build-
-
-      - name: Extract dummy front-end
-        run: |
-          cd public
-          unzip ../.github/public.zip
 
       - name: Copy environment config
         run: cp .github/actions.env .env
@@ -176,11 +172,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Node dependencies
-        run: npm clean-install
-
-      - name: Build Front-end
-        run: npm run-script build
+      - uses: actions/download-artifact@v2
+        with:
+          name: frontend
+          path: public/
 
       - name: Build image
         env:
