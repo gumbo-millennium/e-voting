@@ -100,7 +100,8 @@ jobs:
           extensions: exif, json, mbstring, bcmath, dom, fileinfo, mysql
           coverage: pcov
 
-      - uses: actions/download-artifact@v2
+      - name: Download front-end
+        uses: actions/download-artifact@v2
         with:
           name: frontend
           path: public/
@@ -181,7 +182,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - uses: actions/download-artifact@v2
+      - name: Download front-end
+        uses: actions/download-artifact@v2
         with:
           name: frontend
           path: public/
