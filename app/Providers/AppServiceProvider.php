@@ -12,6 +12,7 @@ use App\Services\VerificationService;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -55,6 +56,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        /**
+         * Enfore HTTPS when in production
+         */
+        if (App::environment(['production'])) {
+            URL::forceScheme('https');
+        }
+
         /**
          * Returns the git version, which then gets baked into
          * the template, allowing it to run just once
