@@ -5,8 +5,19 @@ resource "google_cloud_run_service" "default" {
 
   template {
     spec {
+      # Define the container
       containers {
+        # Use image from container registry
         image = data.google_container_registry_image.application.image_url
+
+        # Use higher limits
+        resources {
+          limits = {
+            "cpu"    = "2000m"
+            "memory" = "1024Mi"
+          }
+        }
+
         # Cloud SQL
         env {
           name  = "CLOUD_SQL_CONNECTION_NAME"
@@ -67,6 +78,9 @@ resource "google_cloud_run_service" "default" {
           value = local.conscribo_password
         }
       }
+
+      # Define concurrency (reqs / container)
+      container_concurrency = 0
     }
 
     # Define the data, such as Cloud SQL connection
