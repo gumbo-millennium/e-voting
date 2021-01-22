@@ -191,7 +191,7 @@ jobs:
         run: terraform -chdir=.cloud/terraform refresh
 
       - name: Plan Terraform deployment
-        run: terraform -chdir=.cloud/terraform plan
+        run: terraform -chdir=.cloud/terraform plan -out ./terraform.tfplan > /dev/null
 
       - name: Apply Terraform deployment
-        run: terraform -chdir=.cloud/terraform apply -auto-approve
+        run: terraform -chdir=.cloud/terraform apply ./terraform.tfplan
