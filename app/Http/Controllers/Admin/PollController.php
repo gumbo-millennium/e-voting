@@ -94,10 +94,13 @@ class PollController extends AdminController
             );
         }
 
+        $pollTitle = Str::ascii($poll->title, 'nl');
+        $pollTitle = preg_replace('/[^a-z0-9\s]+/', '-', $pollTitle);
+
         return Storage::download($expectedFile, sprintf(
             'Uitslagen stemming %d - %s.ods',
             $poll->id,
-            Str::ascii($poll->title, 'nl')
+            $pollTitle
         ));
     }
 
