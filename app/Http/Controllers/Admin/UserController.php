@@ -220,9 +220,11 @@ class UserController extends AdminController
         }
 
         // Update users
-        $count = User::query()
-            ->where('is_present', '1')
-            ->update(['is_present' => 0]);
+        $count = User::unguarded(
+            static fn () => User::query()
+                ->where('is_present', '1')
+                ->update(['is_present' => 0])
+        );
 
         // Done
         $this->sendNotice(sprintf('%d gebruiker(s) gemarkeerd als afwezig', $count));
