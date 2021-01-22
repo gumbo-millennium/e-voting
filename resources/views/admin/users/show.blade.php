@@ -5,7 +5,7 @@ $facts = [
     'Stemrecht' => $user->is_voter,
     'Machtigbaar' => $user->can_proxy,
     'Heeft machtiging afgegeven' => $user->proxy !== null,
-    'Heeft machtiging van ander' => optional($user->proxy_for)->name ?? false,
+    'Heeft machtiging van ander' => optional($user->proxyFor)->name ?? false,
     'Telraad' => $user->is_monitor,
     'Aanwezig' => $user->is_present,
 ];
