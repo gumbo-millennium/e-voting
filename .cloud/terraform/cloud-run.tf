@@ -43,39 +43,39 @@ resource "google_cloud_run_service" "default" {
         # Database secrets
         env {
           name  = "DB_DATABASE"
-          value = local.cloud_sql_database
+          value = local.cloud_sql.database
         }
         env {
           name  = "DB_USERNAME"
-          value = local.cloud_sql_username
+          value = local.cloud_sql.username
         }
         env {
           name  = "DB_PASSWORD"
-          value = local.cloud_sql_password
+          value = local.cloud_sql.password
         }
 
         # Messagebird secrets
         env {
           name  = "MESSAGEBIRD_ACCESS_KEY"
-          value = local.messagebird_access_key
+          value = local.messagebird.access_key
         }
         env {
           name  = "MESSAGEBIRD_ORIGINATOR"
-          value = local.messagebird_origin
+          value = local.messagebird.origin
         }
 
         # Concribo secrets
         env {
           name  = "CONSCRIBO_ACCOUNT"
-          value = local.conscribo_account
+          value = local.conscribo.account
         }
         env {
           name  = "CONSCRIBO_USERNAME"
-          value = local.conscribo_username
+          value = local.conscribo.username
         }
         env {
           name  = "CONSCRIBO_PASSWORD"
-          value = local.conscribo_password
+          value = local.conscribo.password
         }
       }
 

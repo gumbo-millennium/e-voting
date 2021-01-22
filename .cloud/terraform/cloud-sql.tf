@@ -19,14 +19,14 @@ resource "google_sql_database_instance" "db_mysql" {
 # Create a database in the MySQL server
 resource "google_sql_database" "laravel" {
   instance = google_sql_database_instance.db_mysql.name
-  name     = local.cloud_sql_database
+  name     = local.cloud_sql.database
 }
 
 # And create a user in our server
 resource "google_sql_user" "users" {
   instance = google_sql_database_instance.db_mysql.name
-  name     = local.cloud_sql_username
-  password = local.cloud_sql_password
+  name     = local.cloud_sql.username
+  password = local.cloud_sql.password
 }
 
 # Add a resource to bind Cloud Run properly
