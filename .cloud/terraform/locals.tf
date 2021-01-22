@@ -3,7 +3,7 @@ locals {
   server_prefix = random_id.server_prefix.hex
 
   # App key
-  app_token = data.google_secret_manager_secret_version.app_token.secret_data
+  app_token = "base64:${random_id.app_key_bytes.b64_std}"
 
   # Cloud SQL
   cloud_sql_raw = jsondecode(data.google_secret_manager_secret_version.cloud_sql.secret_data)

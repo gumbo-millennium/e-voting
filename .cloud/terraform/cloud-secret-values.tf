@@ -1,8 +1,3 @@
-# App token
-data "google_secret_manager_secret_version" "app_token" {
-  secret = google_secret_manager_secret.app_token.name
-}
-
 # Cloud SQL
 data "google_secret_manager_secret_version" "cloud_sql" {
   secret = google_secret_manager_secret.cloud_sql.name

@@ -1,16 +1,3 @@
-# App token
-resource "google_secret_manager_secret" "app_token" {
-  secret_id = "${var.app_prefix}-app-token"
-
-  replication {
-    user_managed {
-      replicas {
-        location = var.region
-      }
-    }
-  }
-}
-
 # MySQL settings
 resource "google_secret_manager_secret" "cloud_sql" {
   secret_id = "${var.app_prefix}-cloud-sql"
