@@ -13,3 +13,12 @@ resource "random_id" "app_key_bytes" {
 
   byte_length = 32
 }
+
+resource "random_password" "mysql_password" {
+  keepers = {
+    app_prefix = var.app_prefix
+  }
+
+  length  = 32
+  special = true
+}

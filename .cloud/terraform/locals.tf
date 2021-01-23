@@ -6,11 +6,10 @@ locals {
   app_token = "base64:${random_id.app_key_bytes.b64_std}"
 
   # Cloud SQL
-  cloud_sql_raw = jsondecode(data.google_secret_manager_secret_version.cloud_sql.secret_data)
   cloud_sql = {
-    database = tostring(try(local.cloud_sql_raw.database, null))
-    username = tostring(try(local.cloud_sql_raw.username, null))
-    password = tostring(try(local.cloud_sql_raw.password, null))
+    database = "${local.server_prefix}-mysql"
+    username = "${local.server_prefix}-mysql-user"
+    password = random_password.mysql_password
   }
 
   # Messagebird
