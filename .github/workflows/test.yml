@@ -70,16 +70,23 @@ jobs:
   backend:
     name: "Build back-end"
     runs-on: "ubuntu-latest"
+    continue-on-error: ${{ matrix.experimental == true }}
     needs:
       - frontend
     env:
       DB_PORT: '3306'
+
 
     strategy:
       matrix:
         php:
           - '7.4'
           - '8.0'
+          - '8.1'
+
+        include:
+          - php: '8.1'
+            experimental: true
 
     services:
       database:
