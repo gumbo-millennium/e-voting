@@ -154,7 +154,10 @@ jobs:
   deploy-terraform:
     name: "Deploy Terraform application"
     runs-on: ubuntu-latest
-    environment: production
+    environment:
+      name: production
+      url: https://e-voting.gumbo-millennium.nl/
+
     needs:
       - build-gcr-image
 

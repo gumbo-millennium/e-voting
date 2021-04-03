@@ -1,0 +1,63 @@
+name: "Tear down application"
+
+on:
+  workflow_dispatch:
+
+env:
+  # Google Container Repository values
+  PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+  SERVICE: evoting
+  GCR_REGION: eu
+
+  # Terraform values
+  TF_VAR_project: ${{ secrets.GOOGLE_PROJECT_ID }}
+  TF_VAR_container_name: evoting
+  TF_VAR_container_version:  ${{ github.sha }}
+  TF_VAR_container_region: eu
+  TF_VAR_app_prefix: vote2021-release
+
+  # Dummy app key
+  APP_KEY: base64:8fzvICpJu/KQi7u4kP59hU6stPTYDSx+ftkyR2z5do0=
+
+jobs:
+  destroy-terraform:
+    name: Tear down Terraform application
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://e-voting.gumbo-millennium.nl/
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          export_default_credentials: true
+
+      - name: Register Google Application Credentials in env
+        run: echo "TF_VAR_credentials_file=${GOOGLE_APPLICATION_CREDENTIALS}" >> $GITHUB_ENV
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+          cli_config_credentials_token: ${{ secrets.TERRAFORM_CLI_TOKEN }}
+
+      - name: Validate Terraform formatting
+        run: terraform -chdir=.cloud/terraform fmt -check
+
+      - name: Initialize Terraform
+        run: terraform -chdir=.cloud/terraform init -input=false
+
+      - name: Validate Terraform configuration
+        run: terraform -chdir=.cloud/terraform validate
+
+      - name: Refresh Terraform deployment information
+        run: terraform -chdir=.cloud/terraform refresh
+
+      - name: Tear down Terraform deployment
+        run: terraform -chdir=.cloud/terraform destroy -auto-approve -refresh=false
