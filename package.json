@@ -30,6 +30,6 @@
     },
     "dependencies": {
         "@tailwindcss/custom-forms": "^0.2.1",
-        "tailwindcss": "^1.9.5"
+        "tailwindcss": "^2.0.0"
     }
 }
