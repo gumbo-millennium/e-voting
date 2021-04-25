@@ -2,7 +2,7 @@
 
 @section('content')
 <h1 class="font-title font-bold text-2xl">
-    Ledennbeheer
+    Ledenbeheer
 </h1>
 
 <p class="text-lg mb-4">
