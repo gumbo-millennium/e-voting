@@ -63,7 +63,7 @@ const colors = {
   // Red
   red: baseTheme('colors.red'),
   // Orange
-  orange: baseTheme('colors.orange'),
+  orange: baseTheme('colors.yellow'),
   // Green
   green: baseTheme('colors.green'),
   // Blue
@@ -75,6 +75,6 @@ const colors = {
 module.exports = {
   colors: colors,
   plugins: [
-    require('@tailwindcss/custom-forms')
+    require('@tailwindcss/forms')
   ]
 }

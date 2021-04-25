@@ -11,6 +11,10 @@
         "start": "yarn run watch",
         "make-dummy-zip": "./.github/bin/make-dummy-zip"
     },
+    "dependencies": {
+        "@tailwindcss/forms": "^0.3.2",
+        "tailwindcss": "^2.1.2"
+    },
     "devDependencies": {
         "autoprefixer": "^10.2.3",
         "compression-webpack-plugin": "^6.0.3",
@@ -27,9 +31,5 @@
         "postcss": "^8.0.0",
         "postcss-calc": "^7.0.5",
         "postcss-import": "^13.0.0"
-    },
-    "dependencies": {
-        "@tailwindcss/custom-forms": "^0.2.1",
-        "tailwindcss": "^1.9.5"
     }
 }
