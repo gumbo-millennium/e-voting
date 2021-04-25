@@ -1,14 +1,14 @@
 {
     "private": true,
     "scripts": {
-        "dev": "yarn run development",
         "development": "npx mix build",
         "watch": "npx mix watch",
         "hot": "npx mix watch --hot",
-        "prod": "yarn run production",
-        "production": "npx mix build -p",
-        "build": "yarn run production",
-        "start": "yarn run watch",
+        "production": "npx mix build --production",
+        "dev": "npm run development",
+        "prod": "npm run production",
+        "build": "npm run production",
+        "start": "npm run watch",
         "make-dummy-zip": "./.github/bin/make-dummy-zip"
     },
     "dependencies": {
