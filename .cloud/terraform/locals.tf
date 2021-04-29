@@ -9,7 +9,7 @@ locals {
   cloud_sql = {
     database = "${local.server_prefix}-mysql"
     username = "${local.server_prefix}-mysql-user"
-    password = random_password.mysql_password
+    password = random_password.mysql_password.result
   }
 
   # Messagebird
