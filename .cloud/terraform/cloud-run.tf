@@ -77,6 +77,10 @@ resource "google_cloud_run_service" "default" {
           name  = "CONSCRIBO_PASSWORD"
           value = local.conscribo.password
         }
+        env {
+          name  = "CLOUD_RUN_TRUSTED_PROXY"
+          value = "169.254.0.0/16"
+        }
       }
 
       # Define concurrency (reqs / container)
