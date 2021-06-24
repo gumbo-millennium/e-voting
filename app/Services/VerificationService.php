@@ -8,6 +8,7 @@ use App\Contracts\SendsNotifications;
 use App\Models\User;
 use App\Services\Traits\ValidatesPhoneNumbers;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use OTPHP\TOTPInterface;
 
 /**
@@ -105,11 +106,14 @@ final class VerificationService
         $split = (int) ceil(strlen($code) / 2);
         $tokenInParts = \implode(' ', \str_split($code, $split));
 
+        $domain = parse_url(URL::to('/'), PHP_URL_HOST);
+
         // Prep message
-        $message = sprintf(
-            'Je code om in te loggen voor e-voting is %s',
-            $tokenInParts
-        );
+        $message = sprintf(<<<'MESSAGE'
+        Je code om in te loggen voor e-voting is %s.
+
+        @%s #s
+        MESSAGE, $tokenInParts, $domain, $code);
 
         // Log
         Log::info('Sending message {message} to {phone}', compact('message', 'phone'));

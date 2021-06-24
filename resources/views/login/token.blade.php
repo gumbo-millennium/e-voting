@@ -14,7 +14,7 @@
     {{-- Token --}}
     <div class="form-field">
         <label for="token" class="form-field__label">Toegangscode</label>
-        <input type="text" pattern="[0-9]{8}" class="form-field__input form-input" name="token" id="token" />
+        <input type="text" pattern="[0-9]{8}" class="form-field__input form-input" autocomplete="one-time-code" name="token" id="token" />
     </div>
 
     {{-- Submit --}}
