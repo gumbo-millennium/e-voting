@@ -128,12 +128,12 @@ class LoginController extends Controller
             'token' => [
                 'required',
                 'string',
-                'regex:/^\d{8}$/',
+                'regex:/^(\d\s?){8}$/',
             ],
         ]);
 
-        // Get the token
-        $token = $valid['token'];
+        // Get the token, replacing all non-numbers
+        $token = preg_replace('/\D+/', '', $valid['token']);
 
         // Validate the token, with a 3-period window (90 seconds)
         if (!$user->totp->verify($token, null, 3)) {
