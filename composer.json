@@ -9,7 +9,7 @@
         "e-voting",
         "online voting"
     ],
-    "license": "AGPL-3.0",
+    "license": "AGPL-3.0-only",
     "require": {
         "php": "^7.4||^8.0",
         "doctrine/dbal": "^2.12",
