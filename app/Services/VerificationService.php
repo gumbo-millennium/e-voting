@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Contracts\SendsNotifications;
 use App\Models\User;
 use App\Services\Traits\ValidatesPhoneNumbers;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use OTPHP\TOTPInterface;
@@ -102,7 +103,7 @@ final class VerificationService
         }
 
         // Prep token
-        $code = $user->totp->at(time());
+        $code = $user->totp->at(Date::now()->getTimestamp());
         $split = (int) ceil(strlen($code) / 2);
         $tokenInParts = \implode(' ', \str_split($code, $split));
 
