@@ -64,7 +64,7 @@ class LoginController extends Controller
 
         // Check if a user was found
         if (!$user) {
-            $this->sendNotice('Deze gebruiker kon niet worden gevonden');
+            $this->sendNotice('Deze gebruiker kon niet worden gevonden.');
 
             return \response()
                 ->redirectToRoute('login')
@@ -73,7 +73,7 @@ class LoginController extends Controller
 
         // Check the user
         if (empty($user->phone)) {
-            $this->sendNotice('Van deze gebruiker is geen telefoonnummer bekend, je kan dus niet inloggen');
+            $this->sendNotice('Van deze gebruiker is geen telefoonnummer bekend, je kan dus niet inloggen.');
 
             return \response()
                 ->redirectToRoute('login')

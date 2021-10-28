@@ -112,7 +112,7 @@ final class VerificationService
         $message = sprintf(<<<'MESSAGE'
         Je code om in te loggen voor e-voting is %s.
 
-        @%s #s
+        @%s #%s
         MESSAGE, $tokenInParts, $domain, $code);
 
         // Log
