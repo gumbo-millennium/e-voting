@@ -9,8 +9,10 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 // Build configs
 module.exports = {
   plugins: gumboSettings.plugins,
+
+  mode: 'jit',
+
   purge: {
-    mode: 'layers',
     content: [
       'app/**/*.php',
       'config/**/*.php',
@@ -19,6 +21,7 @@ module.exports = {
       'resources/js/**/*.js'
     ]
   },
+
   theme: {
     extend: {
       fontFamily: {
