@@ -2,6 +2,7 @@
 
 @php
 $facts = [
+    'Groep(en)' => $user->group,
     'Stemrecht' => $user->is_voter,
     'Machtigbaar' => $user->can_proxy,
     'Heeft machtiging afgegeven' => $user->proxy !== null,
