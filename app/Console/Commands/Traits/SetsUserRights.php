@@ -66,6 +66,7 @@ trait SetsUserRights
 
         // Assign
         $conscriboId = $user->conscribo_id;
+        $user->group = $this->determineGroup($conscriboId, $groups);
         $user->is_voter = $this->existsInCollection($conscriboId, $groups, self::$voteGroups);
         $user->can_proxy = $this->existsInCollection($conscriboId, $groups, self::$proxyGroups);
         $user->is_admin = $admins->contains($conscriboId);
@@ -185,5 +186,21 @@ trait SetsUserRights
     private function existsInCollection(int $id, Collection $collection, array $keys): bool
     {
         return $collection->only($keys)->collapse()->contains($id);
+    }
+
+    /**
+     * Return the groups the given ID is in.
+     *
+     * @param int $id
+     * @param Collection $groups
+     * @return string
+     */
+    private function determineGroup(int $id, Collection $groups): string
+    {
+        // Find groups that contain this id
+        return $groups
+            ->filter(static fn (array $group) => in_array($id, $group, true))
+            ->keys()
+            ->implode(', ');
     }
 }
