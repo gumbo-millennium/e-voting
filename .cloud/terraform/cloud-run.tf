@@ -61,7 +61,7 @@ resource "google_cloud_run_service" "default" {
         }
         env {
           name  = "MESSAGEBIRD_ORIGINATOR"
-          value = local.messagebird.originator
+          value = local.messagebird.origin
         }
 
         # Concribo secrets

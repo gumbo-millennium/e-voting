@@ -24,7 +24,7 @@ Example configs are:
 ```json
 {
     "access_key": "key",
-    "originator": "Gumbo"
+    "origin": "Gumbo"
 }
 ```
 
