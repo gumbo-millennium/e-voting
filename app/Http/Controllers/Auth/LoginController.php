@@ -10,6 +10,7 @@ use App\Services\VerificationService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
@@ -137,10 +138,23 @@ class LoginController extends Controller
 
         // Validate the token, with a 3-period window (90 seconds)
         if (!$user->totp->verify($token, null, 3)) {
-            return \response()
+            return response()
                 ->redirectToRoute('login.verify')
                 ->with('message', 'De opgegeven code is onjuist');
         }
+
+        // Check if token isn't consumed already
+        $consumptionKey = "tokens.used.{$user->id}.{$token}";
+        if (Cache::has($consumptionKey)) {
+            return response()
+                ->redirectToRoute('login.verify')
+                ->with('message', 'De opgegeven code is al gebruikt');
+
+            // OWASP states we actually shouldn't, but I'm not too worried.
+        }
+
+        // Store it for a short while
+        Cache::put($consumptionKey, $token, Date::now()->addMinutes(5));
 
         // Log in
         Auth::login($user, true);
