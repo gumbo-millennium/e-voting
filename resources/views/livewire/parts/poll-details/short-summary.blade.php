@@ -32,7 +32,7 @@ $isApproved = $approval->positive === $approval->total;
 <div class="flex-none number-grid number-grid--small">
     <div class="number-grid__tile">
         <data class="number-grid__number {{ $isApproved ? 'number-grid__number--green' : 'number-grid__number--red' }}">{{ $isApproved ? 'OK' : 'FAIL' }}</data>
-        <small class="number-grid__label">Telraad</small>
+        <small class="number-grid__label">Telcommissie</small>
     </div>
 </div>
 </div>

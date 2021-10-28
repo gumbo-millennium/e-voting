@@ -42,7 +42,7 @@
         @auth
         Ingelogd als <strong>{{ Auth::user()->name }}</strong><br />
         @can('monitor')
-        <a href="{{ route('monitor.index') }}">Controle</a>&nbsp;
+        <a href="{{ route('monitor.index') }}">Telcommissie</a>&nbsp;
         @endcan
         @can('admin')
         <a href="{{ route('admin.index') }}">Admin</a>&nbsp;
