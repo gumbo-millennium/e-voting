@@ -22,6 +22,7 @@
         "laravel/framework": "^8.0",
         "livewire/livewire": "^2.3",
         "messagebird/php-rest-api": "^1.19",
+        "owenvoke/blade-fontawesome": "^1.10",
         "phpoffice/phpspreadsheet": "^1.15",
         "spomky-labs/otphp": "^10.0",
         "superbalist/laravel-google-cloud-storage": "^2.2"
