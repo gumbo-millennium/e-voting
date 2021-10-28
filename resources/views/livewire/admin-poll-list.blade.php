@@ -21,7 +21,16 @@
 
     {{-- Render users --}}
     <div class="mb-4">
+        @php($lastDate = null)
+
         @forelse ($this->polls as $poll)
+
+        @if ($lastDate !== $poll->created_at->format('Y-m-d HH') && $lastDate = $poll->created_at->format('Y-m-d HH'))
+        <p class="p-4 text-center text-gray-600">
+            {{ $poll->created_at->isoFormat('dddd DD MMMM YYYY, HH:mm') }}
+        </p>
+        @endif
+
         <livewire:admin-poll :poll="$poll" :key="$poll->id" />
         @empty
         <div class="notice notice--info">
