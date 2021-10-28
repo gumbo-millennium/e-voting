@@ -2,13 +2,11 @@
     <details class="notice">
         <summary class="flex items-center cursor-pointer">
             @can('vote')
-            <x-fas-check-circle class="h-8 mr-4" />
-
-            <strong class="flex-grow">Je mag stemmen</strong>
+                <x-fas-check-circle class="h-8 mr-4 text-brand-800" />
+                <p class="flex-grow text-brand-800">Je mag stemmen</p>
             @else
-            <x-fas-exclamation-circle class="h-8 mr-4 text-orange-700" />
-
-            <strong class="flex-grow text-orange-700">Je mag niet stemmen</strong>
+                <x-fas-exclamation-circle class="h-8 mr-4 text-orange-700" />
+                <p class="flex-grow text-orange-700">Je mag niet stemmen</p>
             @endcan
 
             <x-fas-chevron-down class="h-4 mx-2 hide-if-open" />

@@ -4,7 +4,7 @@
         @if ($this->user->can('vote', $poll) && $this->user->can('castVote', $poll))
         <button class="btn btn--brand btn--narrow my-0" wire:click="$set('expand', true)">Nu stemmen</button>
         @elseif ($this->user->can('vote', $poll) && !$this->user->can('castVote', $poll))
-        <p class="text-brand-600 font-bold">Stem uitgebracht</p>
+        <p class="text-brand-800 font-bold">Stem uitgebracht</p>
         @else
         <p class="text-yellow-600">Geen stemrecht</p>
         @endcan
@@ -18,7 +18,7 @@
         @if ($this->user->can('vote', [$poll, $this->proxy]) && $this->user->can('castVote', [$poll, $this->proxy]))
         <button class="btn btn--brand btn--narrow my-0" wire:click="$set('expandProxy', true)">Nu stemmen</button>
         @elseif ($this->user->can('vote', [$poll, $this->proxy]) && !$this->user->can('castVote', [$poll, $this->proxy]))
-        <p class="text-brand-600 font-bold">Stem uitgebracht</p>
+        <p class="text-brand-800 font-bold">Stem uitgebracht</p>
         @else
         <p class="text-yellow-600">Geen stemrecht</p>
         @endcan

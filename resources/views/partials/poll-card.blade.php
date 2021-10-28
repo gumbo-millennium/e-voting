@@ -5,7 +5,7 @@
         @if (!empty($label))
         {{ $label }}
         @else
-        <div class="text-brand-600 flex-none">{{ $poll->status }}</div>
+        <div class="text-brand-800 flex-none">{{ $poll->status }}</div>
         @endif
     </div>
 

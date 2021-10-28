@@ -14,7 +14,7 @@ $voteUsers = [
     {{-- Title --}}
     <div class="flex flex-row items-start mb-4">
         <h3 class="font-title font-normal mr-4 w-full text-xl">{{ $poll->title }}</h3>
-        <div class="text-brand-600 flex-none">{{ $poll->status }}</div>
+        <div class="text-brand-800 flex-none">{{ $poll->status }}</div>
     </div>
 
     {{-- Actions --}}

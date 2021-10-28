@@ -9,7 +9,7 @@
 
         {{-- Given approval --}}
         @if ($approval)
-        <div class="ml-4 text-brand-600">{{ $approval->result_name }}</div>
+        <div class="ml-4 text-brand-800">{{ $approval->result_name }}</div>
         @endif
     </div>
 

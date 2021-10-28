@@ -16,7 +16,7 @@
     @stack('html-head-end')
 </head>
 
-<body class="bg-grey-secondary">
+<body>
     @stack('html-body-start')
 
     @yield('html-body')
