@@ -71,8 +71,6 @@ jobs:
     name: "Build back-end"
     runs-on: "ubuntu-latest"
     continue-on-error: ${{ matrix.experimental == true }}
-    needs:
-      - frontend
     env:
       DB_PORT: '3306'
 
@@ -111,12 +109,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: true
-
-      - name: Download front-end
-        uses: actions/download-artifact@v2
-        with:
-          name: frontend
-          path: public/
 
       - name: Check for Gumbo Millennium typos
         run: .github/find-typos.sh
