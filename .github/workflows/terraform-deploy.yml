@@ -1,0 +1,73 @@
+name: Deploy using Terraform
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: Version to deploy
+        required: true
+        type: string
+
+    secrets:
+      # Google Cloud Platform secrets
+      google_project_id:
+        required: true
+      google_application_credentials:
+        required: true
+
+      # Terraform secrets
+      terraform_cli_token:
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy using Terraform
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://e-voting.gumbo-millennium.nl/
+
+    env:
+      TF_VAR_project: ${{ secrets.google_project_id }}
+      TF_VAR_container_name: evoting
+      TF_VAR_container_version:  ${{ inputs.version }}
+      TF_VAR_container_region: eu
+      TF_VAR_app_prefix: vote2021-release
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@main
+        with:
+          project_id: ${{ secrets.google_project_id }}
+          service_account_key: ${{ secrets.google_application_credentials }}
+          export_default_credentials: true
+
+      - name: Register Google Application Credentials in env
+        run: echo "TF_VAR_credentials_file=${GOOGLE_APPLICATION_CREDENTIALS}" >> $GITHUB_ENV
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+          cli_config_credentials_token: ${{ secrets.terraform_cli_token }}
+
+      - name: Validate Terraform formatting
+        run: terraform -chdir=.cloud/terraform fmt -check
+
+      - name: Initialize Terraform
+        run: terraform -chdir=.cloud/terraform init -input=false
+
+      - name: Validate Terraform configuration
+        run: terraform -chdir=.cloud/terraform validate
+
+      - name: Refresh Terraform deployment information
+        run: terraform -chdir=.cloud/terraform refresh
+
+      - name: Plan Terraform deployment
+        run: terraform -chdir=.cloud/terraform plan -out ./terraform.tfplan > /dev/null
+
+      - name: Apply Terraform deployment
+        run: terraform -chdir=.cloud/terraform apply ./terraform.tfplan
