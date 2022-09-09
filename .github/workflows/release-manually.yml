@@ -1,0 +1,24 @@
+name: Deploy existing version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy'
+        required: true
+        default: 'latest'
+
+jobs:
+  deploy:
+    name: Deploy
+
+    needs:
+      - build-gcr-image
+
+    uses: gumbo-millennium/e-voting/.github/workflows/terraform-deploy.yml@master
+    with:
+      version: ${{ inputs.version }}
+    secrets:
+      google_project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
+      google_application_credentials: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      terraform_cli_token: ${{ secrets.TERRAFORM_CLI_TOKEN }}
