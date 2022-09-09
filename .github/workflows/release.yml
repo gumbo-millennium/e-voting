@@ -125,7 +125,7 @@ jobs:
           path: public/
 
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@main
+        uses: google-github-actions/setup-gcloud@v0
         with:
           project_id: ${{ env.PROJECT_ID }}
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
