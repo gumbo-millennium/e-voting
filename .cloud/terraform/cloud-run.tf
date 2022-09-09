@@ -13,7 +13,7 @@ resource "google_cloud_run_service" "default" {
         # Use higher limits
         resources {
           limits = {
-            "cpu"    = "2"
+            "cpu"    = "2000m"
             "memory" = "1024Mi"
           }
         }
@@ -90,7 +90,7 @@ resource "google_cloud_run_service" "default" {
     # Define the data, such as Cloud SQL connection
     metadata {
       annotations = {
-        "autoscaling.knative.dev/maxScale"      = "20"
+        "autoscaling.knative.dev/maxScale"      = "10"
         "autoscaling.knative.dev/minScale"      = "1"
         "run.googleapis.com/cloudsql-instances" = data.google_sql_database_instance.db_mysql.connection_name
         "run.googleapis.com/client-name"        = "terraform"
