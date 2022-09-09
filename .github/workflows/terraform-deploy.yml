@@ -12,9 +12,7 @@ on:
       # Google Cloud Platform secrets
       GOOGLE_PROJECT_ID:
         required: true
-      GOOGLE_APPLICATION_CREDENTIALS:
-        required: true
-      GOOGLE_WORKLOAD_IDENTITY_PROVIDER:
+      GOOGLE_SERVICE_ACCOUNT_KEY:
         required: true
 
       # Terraform secrets
@@ -29,8 +27,7 @@ on:
         default: 'latest'
 
 permissions:
-  id-token: write # This is required for requesting the JWT
-  contents: read  # This is required for actions/checkout
+  contents: read
 
 jobs:
   deploy:
@@ -55,10 +52,7 @@ jobs:
         uses: google-github-actions/auth@v0
         with:
           project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
-          workload_identity_provider: ${{ secrets.GOOGLE_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-          export_environment_variables: true
-          create_credentials_file: true
+          credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
