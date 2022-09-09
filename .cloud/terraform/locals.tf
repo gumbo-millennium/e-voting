@@ -1,6 +1,6 @@
 locals {
   # Randoms
-  server_prefix = random_id.server_prefix.hex
+  server_prefix = "ev${random_id.server_prefix.hex}"
 
   # App key
   app_token = "base64:${random_id.app_key_bytes.b64_std}"
