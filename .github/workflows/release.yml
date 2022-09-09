@@ -162,6 +162,6 @@ jobs:
     with:
       version: ${{ github.sha }}
     secrets:
-      google_project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
-      google_application_credentials: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-      terraform_cli_token: ${{ secrets.TERRAFORM_CLI_TOKEN }}
+      GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      TERRAFORM_CLI_TOKEN: ${{ secrets.TERRAFORM_CLI_TOKEN }}
