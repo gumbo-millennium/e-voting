@@ -70,6 +70,9 @@ jobs:
       - name: Validate Terraform configuration
         run: terraform -chdir=.cloud/terraform validate
 
+      - name: Setup secrets on Google Cloud
+        run: .github/bin/create-secrets.sh
+
       - name: Refresh Terraform deployment information
         run: terraform -chdir=.cloud/terraform refresh
 
