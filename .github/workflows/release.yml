@@ -88,8 +88,8 @@ jobs:
       - name: Build image for GitHub
         run: |
           docker build \
-            --tag docker.pkg.github.com/gumbo-millennium/e-voting/app:${RELEASE_HASH} \
-            --tag docker.pkg.github.com/gumbo-millennium/e-voting/app:${RELEASE_TAG} \
+            --tag docker.pkg.github.com/gumbo-millennium/e-voting/app:${RELEASE_HASH:-latest} \
+            --tag docker.pkg.github.com/gumbo-millennium/e-voting/app:${RELEASE_TAG:-latest} \
             --tag docker.pkg.github.com/gumbo-millennium/e-voting/app:latest \
             --file .cloud/Dockerfile \
             --progress plain \
@@ -105,8 +105,8 @@ jobs:
 
       - name: Push newly created tag
         run: |
-          docker push docker.pkg.github.com/gumbo-millennium/e-voting/app:${RELEASE_HASH}
-          docker push docker.pkg.github.com/gumbo-millennium/e-voting/app:${RELEASE_TAG}
+          docker push docker.pkg.github.com/gumbo-millennium/e-voting/app:${RELEASE_HASH:-latest}
+          docker push docker.pkg.github.com/gumbo-millennium/e-voting/app:${RELEASE_TAG:-latest}
           docker push docker.pkg.github.com/gumbo-millennium/e-voting/app:latest
 
   build-gcr-image:
@@ -126,7 +126,7 @@ jobs:
           path: public/
 
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@main
         with:
           project_id: ${{ env.PROJECT_ID }}
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
@@ -138,8 +138,8 @@ jobs:
       - name: Build Google Cloud Run image
         run: |
           docker build \
-            --tag ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:${RELEASE_HASH} \
-            --tag ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:${RELEASE_TAG} \
+            --tag ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:${RELEASE_HASH:-latest} \
+            --tag ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:${RELEASE_TAG:-latest} \
             --tag ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:latest \
             --file .cloud/Dockerfile \
             --progress plain \
@@ -148,8 +148,8 @@ jobs:
 
       - name: Push image to Google Container Registry
         run: |
-          docker push ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:${RELEASE_HASH}
-          docker push ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:${RELEASE_TAG}
+          docker push ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:${RELEASE_HASH:-latest}
+          docker push ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:${RELEASE_TAG:-latest}
           docker push ${GCR_REGION}.gcr.io/${PROJECT_ID}/${SERVICE}:latest
 
   deploy-terraform:
@@ -167,7 +167,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@main
         with:
           project_id: ${{ env.PROJECT_ID }}
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
