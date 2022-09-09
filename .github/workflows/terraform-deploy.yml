@@ -62,8 +62,6 @@ jobs:
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
-        with:
-          project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
 
       - name: Register Google Application Credentials in env
         run: echo "TF_VAR_credentials_file=${GOOGLE_APPLICATION_CREDENTIALS}" >> $GITHUB_ENV
